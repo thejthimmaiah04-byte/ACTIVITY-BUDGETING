@@ -3,20 +3,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap">
 <style>
 :root {
-  --bg:       #F1F5F0;
-  --surface:  #FFFFFF;
-  --surface2: #E8EEE7;
-  --border:   #C4D4C2;
-  --accent:   #2E6E3E;
-  --text:     #192B1C;
-  --text2:    #4A6B4E;
-  --text3:    #7A9B7E;
-  --dot:      #22C55E;
-  --snap:     #2563EB;
-  --shadow:   0 1px 3px rgba(20,50,25,.08),0 4px 16px rgba(20,50,25,.06);
-  color-scheme: light;
+  --bg:#F1F5F0;--surface:#FFFFFF;--surface2:#E8EEE7;
+  --border:#C4D4C2;--accent:#2E6E3E;
+  --text:#192B1C;--text2:#4A6B4E;--text3:#7A9B7E;
+  --dot:#22C55E;--snap:#2563EB;
+  --shadow:0 1px 3px rgba(20,50,25,.08),0 4px 16px rgba(20,50,25,.06);
+  color-scheme:light;
 }
-@media (prefers-color-scheme:dark){
+@media(prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --bg:#0D1610;--surface:#131E14;--surface2:#1A271B;
     --border:#263829;--accent:#4CAF6A;
@@ -33,196 +27,114 @@
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:'DM Sans',system-ui,sans-serif;font-size:14px;line-height:1.5;
-  min-height:100vh;padding-inline:20px;
-}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:14px;line-height:1.5;min-height:100vh;padding-inline:20px;}
 
 /* HEADER */
-.hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  padding-block:16px;border-bottom:1px solid var(--border);gap:12px;
-}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding-block:16px;border-bottom:1px solid var(--border);gap:12px;}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .logo-icon{width:34px;height:34px;flex-shrink:0}
 .logo-text{display:flex;flex-direction:column;gap:1px}
 .logo-name{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:600;color:var(--text);line-height:1.2}
 .logo-sub{font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase}
 .hdr-actions{display:flex;align-items:center;gap:8px}
-.btn-icon{
-  width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
-  background:var(--surface);color:var(--text2);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:.15s;
-}
+.btn-icon{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
 .btn-icon:hover{background:var(--surface2);color:var(--accent)}
-.btn-add{
-  display:flex;align-items:center;gap:6px;padding:0 12px;height:34px;
-  border-radius:8px;border:1px solid var(--accent);background:transparent;
-  color:var(--accent);font:500 12px/1 'DM Sans',sans-serif;letter-spacing:.03em;cursor:pointer;transition:.15s;
-}
+.btn-add{display:flex;align-items:center;gap:6px;padding:0 12px;height:34px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);font:500 12px/1 'DM Sans',sans-serif;letter-spacing:.03em;cursor:pointer;transition:.15s;}
 .btn-add:hover{background:var(--accent);color:#fff}
 
+/* SYNC STATUS BAR */
+.sync-bar{display:none;align-items:center;gap:8px;padding:8px 14px;margin-block:16px 0;border-radius:8px;font-size:12px;border:1px solid transparent;}
+.sync-bar.show{display:flex}
+.sync-bar.ok{background:#d1fae5;border-color:#6ee7b7;color:#065f46}
+.sync-bar.err{background:#fee2e2;border-color:#fca5a5;color:#991b1b}
+.sync-bar.loading{background:var(--surface2);border-color:var(--border);color:var(--text2)}
+:root[data-theme="dark"] .sync-bar.ok,:root[data-theme="dark"] .sync-bar.err{filter:brightness(.8)}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+
 /* GRID */
-.grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-  gap:20px;padding-block:24px;
-}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;padding-block:20px;}
 
 /* TILE */
 .tile{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
-.tile-tab{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 10px;background:var(--surface2);border-bottom:1px solid var(--border);gap:6px;
-}
+.tile-tab{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface2);border-bottom:1px solid var(--border);gap:6px;}
 .tab-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
-.live-dot{
-  width:7px;height:7px;border-radius:50%;background:var(--dot);flex-shrink:0;
-  animation:pulse 2s ease-in-out infinite;
-}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--dot);flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
 .live-dot.off{background:var(--text3);animation:none}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 .tab-names{min-width:0}
-.tab-name{
-  font-family:'Playfair Display',Georgia,serif;font-size:13px;font-weight:600;
-  color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.tab-species{font-size:10px;color:var(--text3);font-style:italic;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab-name{font-family:'Playfair Display',Georgia,serif;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tab-species{font-size:10px;color:var(--text3);font-style:italic;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tab-btns{display:flex;align-items:center;gap:4px;flex-shrink:0}
-
-/* Snap button */
-.btn-snap{
-  display:flex;align-items:center;gap:4px;
-  padding:3px 8px;border-radius:4px;border:1px solid var(--snap);
-  background:transparent;color:var(--snap);
-  font:500 10px/1 'DM Sans',sans-serif;letter-spacing:.06em;
-  text-transform:uppercase;cursor:pointer;transition:.15s;flex-shrink:0;
-}
+.btn-snap{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;border:1px solid var(--snap);background:transparent;color:var(--snap);font:500 10px/1 'DM Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:.15s;}
 .btn-snap:hover{background:var(--snap);color:#fff}
-:root[data-theme="dark"] .btn-snap,
-@media(prefers-color-scheme:dark){ :root:not([data-theme="light"]) .btn-snap{
-  border-color:#60a5fa;color:#60a5fa;
-}}
-
-.tab-btn{
-  width:24px;height:24px;border-radius:5px;border:none;background:transparent;
-  color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s;
-}
+.tab-btn{width:24px;height:24px;border-radius:5px;border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s;}
 .tab-btn:hover{background:var(--border);color:var(--text)}
 
 /* STREAM */
 .tile-stream{position:relative;aspect-ratio:16/9;background:#080d09;overflow:hidden}
-.tile-stream img.stream-img{
-  width:100%;height:100%;object-fit:cover;display:block;
-}
-.tile-offline{
-  position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:10px;
-}
+.tile-stream img{width:100%;height:100%;object-fit:cover;display:block;}
+.tile-offline{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
 .tile-offline-msg{font-size:12px;color:var(--text3);text-align:center;line-height:1.6}
-
-/* FOOTER */
-.tile-foot{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:6px 12px;border-top:1px solid var(--border);
-}
+.tile-foot{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-top:1px solid var(--border);}
 .foot-label{font-size:10px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase}
 .foot-url{font-size:10px;color:var(--text3);font-family:monospace;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* EMPTY */
-.empty{
-  grid-column:1/-1;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:14px;padding:72px 20px;text-align:center;
-}
+.empty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:72px 20px;text-align:center;}
 .empty-title{font-family:'Playfair Display',serif;font-size:19px;color:var(--text2)}
 .empty-sub{font-size:13px;color:var(--text3);max-width:260px;line-height:1.65}
 
-/* MODAL (edit/add) */
-.modal-bg{
-  position:fixed;inset:0;background:rgba(0,0,0,.55);
-  display:flex;align-items:center;justify-content:center;
-  padding:16px;z-index:100;backdrop-filter:blur(3px);
-}
+/* MODALS */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100;backdrop-filter:blur(3px);}
 .modal-bg[hidden]{display:none!important}
-.modal{
-  background:var(--surface);border:1px solid var(--border);border-radius:12px;
-  padding:24px;width:100%;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,.25);
-}
-.modal-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:20px}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;width:100%;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,.25);}
+.modal-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px}
+.modal-sub{font-size:12px;color:var(--text3);margin-bottom:20px;line-height:1.5}
 .field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
 .field label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
-.field input{
-  padding:9px 12px;border:1px solid var(--border);border-radius:7px;
-  background:var(--surface2);color:var(--text);
-  font:13px/1.4 'DM Sans',sans-serif;outline:none;transition:.15s;
-}
+.field input{padding:9px 12px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);color:var(--text);font:13px/1.4 'DM Sans',sans-serif;outline:none;transition:.15s;}
 .field input:focus{border-color:var(--accent)}
 .field input::placeholder{color:var(--text3)}
 .field-hint{font-size:10px;color:var(--text3);margin-top:3px}
 .modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
-.btn{padding:8px 16px;border-radius:7px;font:500 13px/1 'DM Sans',sans-serif;cursor:pointer;border:1px solid transparent;transition:.15s}
+.btn{padding:8px 16px;border-radius:7px;font:500 13px/1 'DM Sans',sans-serif;cursor:pointer;border:1px solid transparent;transition:.15s;}
 .btn:hover{opacity:.85}
 .btn-ghost{background:transparent;border-color:var(--border);color:var(--text2)}
 .btn-primary{background:var(--accent);color:#fff}
+.btn-saving{opacity:.6;pointer-events:none}
 
 /* SNAPSHOT LIGHTBOX */
-.snap-bg{
-  position:fixed;inset:0;background:rgba(0,0,0,.85);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:16px;z-index:200;backdrop-filter:blur(4px);gap:12px;
-}
+.snap-bg{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;z-index:200;backdrop-filter:blur(4px);gap:12px;}
 .snap-bg[hidden]{display:none!important}
-.snap-header{
-  display:flex;align-items:center;justify-content:space-between;
-  width:100%;max-width:860px;
-}
-.snap-title{
-  font-family:'Playfair Display',serif;font-size:15px;font-weight:600;
-  color:#fff;
-}
+.snap-header{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:860px;}
+.snap-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:#fff;}
 .snap-meta{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
 .snap-actions{display:flex;gap:8px;align-items:center}
-.snap-btn{
-  display:flex;align-items:center;gap:5px;
-  padding:6px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.2);
-  background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);
-  font:500 11px/1 'DM Sans',sans-serif;cursor:pointer;transition:.15s;
-}
+.snap-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);font:500 11px/1 'DM Sans',sans-serif;cursor:pointer;transition:.15s;}
 .snap-btn:hover{background:rgba(255,255,255,.18)}
-.snap-close{
-  width:30px;height:30px;border-radius:6px;border:1px solid rgba(255,255,255,.2);
-  background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;
-}
+.snap-close{width:30px;height:30px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
 .snap-close:hover{background:rgba(255,255,255,.18);color:#fff}
-.snap-img-wrap{
-  position:relative;width:100%;max-width:860px;
-  border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;
-  background:#000;aspect-ratio:16/9;
-}
+.snap-img-wrap{position:relative;width:100%;max-width:860px;border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;background:#000;aspect-ratio:16/9;}
 .snap-img-wrap img{width:100%;height:100%;object-fit:contain;display:block}
-.snap-spinner{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-}
+.snap-spinner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
 .snap-spinner svg{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.snap-footer{
-  font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.06em;text-transform:uppercase;
-}
+.snap-footer{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.06em;text-transform:uppercase}
+
+/* TOKEN BADGE */
+.token-badge{font-size:10px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
 
 @media(max-width:480px){
   .grid{grid-template-columns:1fr}
   .logo-sub{display:none}
-  .snap-img-wrap{aspect-ratio:4/3}
 }
 </style>
 
 <header class="hdr">
   <a class="logo" href="#">
-    <svg class="logo-icon" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg class="logo-icon" viewBox="0 0 34 34" fill="none">
       <circle cx="17" cy="17" r="16" fill="var(--surface2)" stroke="var(--border)" stroke-width="1.2"/>
-      <path d="M7 22 Q10 14 15 14 Q20 14 20 19 Q20 24 25 24 Q28 24 28 20"
-            stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <path d="M7 22 Q10 14 15 14 Q20 14 20 19 Q20 24 25 24 Q28 24 28 20" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
       <circle cx="7" cy="22" r="1.8" fill="var(--accent)"/>
       <path d="M7 22 L5 20.5 M7 22 L5 23.5" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/>
     </svg>
@@ -236,6 +148,9 @@ body{
       <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       Add Enclosure
     </button>
+    <button class="btn-icon" onclick="openTokenModal()" title="GitHub sync settings" id="token-btn" aria-label="Sync settings">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1C4 1 1 4 1 7.5c0 2.9 1.9 5.4 4.5 6.3.3.1.4-.1.4-.3V12c-1.8.4-2.2-.9-2.2-.9-.3-.8-.7-1-7-.1-.5-.2-1-.5-1-.9 0-.4.1-.7.4-.9C4 9 4.3 8 3.5 7a1 1 0 0 0-.1-.4c0-.7.6-1.4 1.4-1.4.8 0 1.4.6 1.4 1.4a3.5 3.5 0 0 1-1 2.4c.2.1.4.1.6.1 1.8 0 2-.1 2-.8V5.5c0-.8.7-1.5 1.5-1.5H9c.8 0 1.5.7 1.5 1.5V8c0 .7.2.8 2 .8.2 0 .4 0 .6-.1a3.5 3.5 0 0 1-1-2.4c0-.8.6-1.4 1.4-1.4.8 0 1.4.7 1.4 1.4a1 1 0 0 0-.1.4c-.8 1-.5 2 .7 2.1.3.2.4.5.4.9 0 .4-.5.7-1 .9-.6.1-1 .1-1.2.1-.3.8-.7 1-.7 1s-.4 1.3-2.2.9v1.5c0 .2.1.4.4.3C12.1 12.9 14 10.4 14 7.5 14 4 11 1 7.5 1z" stroke="currentColor" stroke-width=".5" fill="currentColor" opacity=".7"/></svg>
+    </button>
     <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
       <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
         <circle cx="7.5" cy="7.5" r="3" stroke="currentColor" stroke-width="1.3"/>
@@ -245,11 +160,16 @@ body{
   </div>
 </header>
 
+<div class="sync-bar" id="sync-bar">
+  <span class="sync-dot"></span>
+  <span id="sync-msg"></span>
+</div>
+
 <main>
   <div class="grid" id="grid"></div>
 </main>
 
-<!-- Add / Edit modal -->
+<!-- Add / Edit enclosure -->
 <div class="modal-bg" id="modal" hidden>
   <div class="modal">
     <div class="modal-title" id="modal-title">Add Enclosure</div>
@@ -264,11 +184,29 @@ body{
     <div class="field">
       <label>Camera Base URL</label>
       <input id="inp-url" type="text" placeholder="https://your-tunnel.trycloudflare.com">
-      <span class="field-hint">The app adds /stream and /snapshot automatically.</span>
+      <span class="field-hint">App adds /stream and /snapshot automatically.</span>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveEnclosure()">Save</button>
+      <button class="btn btn-primary" id="save-btn" onclick="saveEnclosure()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- GitHub token / sync settings -->
+<div class="modal-bg" id="token-modal" hidden>
+  <div class="modal">
+    <div class="modal-title">GitHub Sync</div>
+    <div class="modal-sub">Enter a GitHub Personal Access Token so changes you make here update for the whole team. Read-only viewers don't need one.</div>
+    <div class="field">
+      <label>GitHub Token</label>
+      <input id="inp-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+      <span class="field-hint">Token needs <strong>Contents: Read & Write</strong> permission on this repo.</span>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="clearToken()">Clear Token</button>
+      <button class="btn btn-ghost" onclick="closeTokenModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveToken()">Save Token</button>
     </div>
   </div>
 </div>
@@ -277,7 +215,7 @@ body{
 <div class="snap-bg" id="snap-bg" hidden>
   <div class="snap-header">
     <div>
-      <div class="snap-title" id="snap-name">Enclosure 01</div>
+      <div class="snap-title" id="snap-name"></div>
       <div class="snap-meta" id="snap-time">Loading…</div>
     </div>
     <div class="snap-actions">
@@ -303,145 +241,138 @@ body{
 </div>
 
 <script>
-const KEY='liana_enc';
-let enc=[];
-let editId=null;
-let snapUrl='';
+const REPO    = 'thejthimmaiah04-byte/ACTIVITY-BUDGETING';
+const BRANCH  = 'main';
+const CFG     = 'config.json';
+const RAW_URL = 'https://raw.githubusercontent.com/'+REPO+'/'+BRANCH+'/'+CFG;
+const API_URL = 'https://api.github.com/repos/'+REPO+'/contents/'+CFG;
+const LS_KEY  = 'liana_enc';
+const TK_KEY  = 'liana_ghtoken';
 
-function load(){
-  try{enc=JSON.parse(localStorage.getItem(KEY))||[];}catch{enc=[];}
-  // Migrate old data: if url ends with /stream, strip it to get base
-  enc=enc.map(function(e){
-    if(e.url&&e.url.endsWith('/stream'))e.url=e.url.slice(0,-7);
-    return e;
-  });
-  if(!enc.length){
-    enc=[{id:'enc1',name:'Enclosure 01',species:'Daboia russelii',url:''}];
-    persist();
-  }
-  render();
+let enc = [];
+let editId = null;
+let snapUrl = '';
+let cfgSha = '';  // needed for GitHub PUT
+
+// ── helpers ────────────────────────────────────────────
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function shortHost(u){try{return new URL(u).hostname;}catch{return u.slice(0,30);}}
+function streamUrl(b){return b.replace(/\/+$/,'')+'/stream';}
+function snapShotUrl(b){return b.replace(/\/+$/,'')+'/snapshot';}
+function getToken(){try{return localStorage.getItem(TK_KEY)||'';}catch{return '';}}
+function persistLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify(enc));}catch{}}
+
+function syncBar(type,msg){
+  var bar=document.getElementById('sync-bar');
+  var txt=document.getElementById('sync-msg');
+  bar.className='sync-bar show '+type;
+  txt.textContent=msg;
+  if(type!=='loading'){setTimeout(function(){bar.classList.remove('show');},4000);}
 }
-
-function persist(){
-  try{localStorage.setItem(KEY,JSON.stringify(enc));}catch{}
-}
-
-function esc(s){
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function shortHost(url){
-  try{return new URL(url).hostname;}catch{return url.slice(0,30);}
-}
-
-function streamUrl(base){return base.replace(/\/+$/,'')+'/stream';}
-function snapshotUrl(base){return base.replace(/\/+$/,'')+'/snapshot';}
 
 function offlineSvg(){
   return '<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><path d="M6 28 Q10 18 18 18 Q26 18 26 24 Q26 30 32 30" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.3"/></svg>';
 }
 
+// ── GitHub read ─────────────────────────────────────────
+async function loadFromGitHub(){
+  try{
+    var r=await fetch(RAW_URL+'?t='+Date.now());
+    if(!r.ok)throw new Error('not found');
+    var data=await r.json();
+    if(data.enclosures&&data.enclosures.length){
+      enc=data.enclosures;
+      persistLocal();
+      syncBar('ok','Loaded from GitHub');
+      render();
+    }
+  }catch(e){
+    // fall back to localStorage silently
+    try{enc=JSON.parse(localStorage.getItem(LS_KEY))||[];}catch{enc=[];}
+    if(!enc.length){enc=[{id:'enc1',name:'Enclosure 01',species:'Daboia russelii',url:''}];}
+    render();
+  }
+  // Also fetch SHA for future writes
+  fetchSha();
+}
+
+async function fetchSha(){
+  var token=getToken();
+  var headers={'Accept':'application/vnd.github+json'};
+  if(token)headers['Authorization']='Bearer '+token;
+  try{
+    var r=await fetch(API_URL,{headers:headers});
+    if(r.ok){var d=await r.json();cfgSha=d.sha||'';}
+  }catch{}
+}
+
+// ── GitHub write ────────────────────────────────────────
+async function pushToGitHub(){
+  var token=getToken();
+  if(!token)return false;
+  var body={enclosures:enc};
+  var content=btoa(unescape(encodeURIComponent(JSON.stringify(body,null,2)+'\n')));
+  try{
+    var payload={message:'Update enclosure config',content:content,branch:BRANCH};
+    if(cfgSha)payload.sha=cfgSha;
+    var r=await fetch(API_URL,{
+      method:'PUT',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/vnd.github+json'},
+      body:JSON.stringify(payload)
+    });
+    if(r.ok){
+      var d=await r.json();
+      if(d.content&&d.content.sha)cfgSha=d.content.sha;
+      return true;
+    }
+    return false;
+  }catch{return false;}
+}
+
+// ── render ──────────────────────────────────────────────
 function render(){
-  const g=document.getElementById('grid');
+  var g=document.getElementById('grid');
   if(!enc.length){
     g.innerHTML='<div class="empty">'+offlineSvg()+'<div class="empty-title">No enclosures yet</div><div class="empty-sub">Add your first enclosure to start monitoring.</div></div>';
     return;
   }
   g.innerHTML=enc.map(function(en){
-    var hasUrl=!!en.url;
-    var sUrl=hasUrl?streamUrl(en.url):'';
+    var has=!!en.url;
+    var su=has?streamUrl(en.url):'';
     return '<div class="tile">'+
       '<div class="tile-tab">'+
         '<div class="tab-left">'+
-          '<span class="live-dot '+(hasUrl?'':'off')+'" id="dot-'+en.id+'"></span>'+
+          '<span class="live-dot '+(has?'':'off')+'" id="dot-'+en.id+'"></span>'+
           '<div class="tab-names">'+
             '<div class="tab-name">'+esc(en.name)+'</div>'+
             (en.species?'<div class="tab-species">'+esc(en.species)+'</div>':'')+
           '</div>'+
         '</div>'+
         '<div class="tab-btns">'+
-          (hasUrl?'<button class="btn-snap" onclick="openSnap(\''+en.id+'\')" title="View last snapshot">'+
-            '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="4.5" r="1.5" stroke="currentColor" stroke-width="1.1"/></svg>'+
-            'Snap</button>':'')+
-          '<button class="tab-btn" onclick="openModal(\''+en.id+'\')" title="Edit">'+
-            '<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M7.5 1l2.5 2.5L3.5 10H1V7.5L7.5 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>'+
-          '</button>'+
-          '<button class="tab-btn" onclick="removeEnc(\''+en.id+'\')" title="Remove">'+
-            '<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5l8-8M9.5 9.5l-8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>'+
-          '</button>'+
+          (has?'<button class="btn-snap" onclick="openSnap(\''+en.id+'\')" title="View last snapshot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="4.5" r="1.5" stroke="currentColor" stroke-width="1.1"/></svg> Snap</button>':'')+
+          '<button class="tab-btn" onclick="openModal(\''+en.id+'\')" title="Edit"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M7.5 1l2.5 2.5L3.5 10H1V7.5L7.5 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></button>'+
+          '<button class="tab-btn" onclick="removeEnc(\''+en.id+'\')" title="Remove"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5l8-8M9.5 9.5l-8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>'+
         '</div>'+
       '</div>'+
       '<div class="tile-stream" id="stream-'+en.id+'">'+
-        (hasUrl
-          ? '<img class="stream-img" src="'+esc(sUrl)+'" alt="'+esc(en.name)+' live feed" onerror="streamError(\''+en.id+'\')" onload="streamOk(\''+en.id+'\')">'
+        (has
+          ? '<img src="'+esc(su)+'" alt="'+esc(en.name)+' live feed" onerror="streamError(\''+en.id+'\')" onload="streamOk(\''+en.id+'\')">'
           : '<div class="tile-offline">'+offlineSvg()+'<div class="tile-offline-msg">No URL configured<br>Click ✎ to add one</div></div>'
         )+
       '</div>'+
-      '<div class="tile-foot">'+
-        '<span class="foot-label">'+(hasUrl?'Live':'Not configured')+'</span>'+
-        '<span class="foot-url">'+(hasUrl?shortHost(en.url):'—')+'</span>'+
-      '</div>'+
+      '<div class="tile-foot"><span class="foot-label">'+(has?'Live':'Not configured')+'</span><span class="foot-url">'+(has?shortHost(en.url):'—')+'</span></div>'+
     '</div>';
   }).join('');
 }
 
 function streamError(id){
-  var dot=document.getElementById('dot-'+id);
-  if(dot)dot.classList.add('off');
+  var d=document.getElementById('dot-'+id);if(d)d.classList.add('off');
   var s=document.getElementById('stream-'+id);
   if(s)s.innerHTML='<div class="tile-offline">'+offlineSvg()+'<div class="tile-offline-msg">Stream unavailable<br>Check the tunnel is running</div></div>';
 }
+function streamOk(id){var d=document.getElementById('dot-'+id);if(d)d.classList.remove('off');}
 
-function streamOk(id){
-  var dot=document.getElementById('dot-'+id);
-  if(dot)dot.classList.remove('off');
-}
-
-// Snapshot lightbox
-function openSnap(id){
-  var en=enc.find(function(x){return x.id===id;});
-  if(!en||!en.url)return;
-  snapUrl=snapshotUrl(en.url);
-  document.getElementById('snap-name').textContent=en.name;
-  document.getElementById('snap-time').textContent='Loading snapshot…';
-  var img=document.getElementById('snap-img');
-  img.style.opacity='0';
-  document.getElementById('snap-spinner').style.display='flex';
-  document.getElementById('snap-bg').hidden=false;
-  loadSnap();
-}
-
-function loadSnap(){
-  var img=document.getElementById('snap-img');
-  img.onload=function(){
-    document.getElementById('snap-spinner').style.display='none';
-    img.style.opacity='1';
-    document.getElementById('snap-time').textContent='Last snapshot · '+new Date().toLocaleTimeString();
-  };
-  img.onerror=function(){
-    document.getElementById('snap-spinner').style.display='none';
-    img.style.opacity='0.3';
-    document.getElementById('snap-time').textContent='Snapshot unavailable';
-  };
-  img.src=snapUrl+'?t='+Date.now();
-}
-
-function refreshSnap(){
-  var img=document.getElementById('snap-img');
-  img.style.opacity='0';
-  document.getElementById('snap-spinner').style.display='flex';
-  document.getElementById('snap-time').textContent='Refreshing…';
-  loadSnap();
-}
-
-function closeSnap(){
-  document.getElementById('snap-bg').hidden=true;
-  var img=document.getElementById('snap-img');
-  img.src='';
-  snapUrl='';
-}
-
-// Edit modal
+// ── enclosure modal ─────────────────────────────────────
 function openModal(id){
   editId=id||null;
   var en=id?enc.find(function(x){return x.id===id;}):null;
@@ -452,45 +383,91 @@ function openModal(id){
   document.getElementById('modal').hidden=false;
   document.getElementById('inp-name').focus();
 }
+function closeModal(){document.getElementById('modal').hidden=true;editId=null;}
 
-function closeModal(){
-  document.getElementById('modal').hidden=true;
-  editId=null;
-}
-
-function saveEnclosure(){
+async function saveEnclosure(){
   var name=document.getElementById('inp-name').value.trim();
   var species=document.getElementById('inp-species').value.trim();
   var url=document.getElementById('inp-url').value.trim().replace(/\/stream$/,'').replace(/\/+$/,'');
   if(!name){document.getElementById('inp-name').focus();return;}
-  if(editId){
-    var en=enc.find(function(x){return x.id===editId;});
-    if(en){en.name=name;en.species=species;en.url=url;}
+  if(editId){var en=enc.find(function(x){return x.id===editId;});if(en){en.name=name;en.species=species;en.url=url;}}
+  else{enc.push({id:'enc_'+Date.now(),name:name,species:species,url:url});}
+  persistLocal();render();closeModal();
+
+  var token=getToken();
+  if(token){
+    syncBar('loading','Syncing to GitHub…');
+    var ok=await pushToGitHub();
+    if(ok)syncBar('ok','Saved — all viewers updated');
+    else syncBar('err','GitHub sync failed. Check your token.');
   }else{
-    enc.push({id:'enc_'+Date.now(),name:name,species:species,url:url});
+    syncBar('err','Saved locally only — add a GitHub token to sync with the team (⚙ icon)');
   }
-  persist();render();closeModal();
 }
 
 function removeEnc(id){
   enc=enc.filter(function(x){return x.id!==id;});
-  persist();render();
+  persistLocal();render();
+  var token=getToken();
+  if(token){syncBar('loading','Syncing…');pushToGitHub().then(function(ok){ok?syncBar('ok','Removed — synced'):syncBar('err','Sync failed');});}
 }
 
+// ── token modal ─────────────────────────────────────────
+function openTokenModal(){
+  document.getElementById('inp-token').value=getToken();
+  document.getElementById('token-modal').hidden=false;
+  document.getElementById('inp-token').focus();
+}
+function closeTokenModal(){document.getElementById('token-modal').hidden=true;}
+function saveToken(){
+  var t=document.getElementById('inp-token').value.trim();
+  try{if(t)localStorage.setItem(TK_KEY,t);else localStorage.removeItem(TK_KEY);}catch{}
+  closeTokenModal();
+  updateTokenIndicator();
+  if(t)fetchSha();
+  syncBar('ok',t?'Token saved — you can now sync changes to the team':'Token cleared');
+}
+function clearToken(){try{localStorage.removeItem(TK_KEY);}catch{}document.getElementById('inp-token').value='';updateTokenIndicator();}
+function updateTokenIndicator(){
+  var btn=document.getElementById('token-btn');
+  btn.style.borderColor=getToken()?'var(--accent)':'';
+  btn.style.color=getToken()?'var(--accent)':'';
+}
+
+// ── snapshot lightbox ────────────────────────────────────
+function openSnap(id){
+  var en=enc.find(function(x){return x.id===id;});if(!en||!en.url)return;
+  snapUrl=snapShotUrl(en.url);
+  document.getElementById('snap-name').textContent=en.name;
+  document.getElementById('snap-time').textContent='Loading…';
+  var img=document.getElementById('snap-img');img.style.opacity='0';
+  document.getElementById('snap-spinner').style.display='flex';
+  document.getElementById('snap-bg').hidden=false;
+  loadSnap();
+}
+function loadSnap(){
+  var img=document.getElementById('snap-img');
+  img.onload=function(){document.getElementById('snap-spinner').style.display='none';img.style.opacity='1';document.getElementById('snap-time').textContent='Last snapshot · '+new Date().toLocaleTimeString();};
+  img.onerror=function(){document.getElementById('snap-spinner').style.display='none';img.style.opacity='0.3';document.getElementById('snap-time').textContent='Snapshot unavailable';};
+  img.src=snapUrl+'?t='+Date.now();
+}
+function refreshSnap(){var img=document.getElementById('snap-img');img.style.opacity='0';document.getElementById('snap-spinner').style.display='flex';document.getElementById('snap-time').textContent='Refreshing…';loadSnap();}
+function closeSnap(){document.getElementById('snap-bg').hidden=true;document.getElementById('snap-img').src='';snapUrl='';}
+
+// ── theme ────────────────────────────────────────────────
 function toggleTheme(){
-  var r=document.documentElement;
-  var cur=r.getAttribute('data-theme');
-  var next=cur==='dark'?'light':'dark';
-  r.setAttribute('data-theme',next);
-  try{localStorage.setItem('liana_theme',next);}catch{}
+  var r=document.documentElement;var next=r.getAttribute('data-theme')==='dark'?'light':'dark';
+  r.setAttribute('data-theme',next);try{localStorage.setItem('liana_theme',next);}catch{}
 }
 
-// Close on backdrop click
-document.getElementById('modal').addEventListener('click',function(ev){if(ev.target===this)closeModal();});
-document.getElementById('snap-bg').addEventListener('click',function(ev){if(ev.target===this)closeSnap();});
-// Close lightbox on Escape
-document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){closeSnap();closeModal();}});
+// ── backdrop clicks & keyboard ───────────────────────────
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('token-modal').addEventListener('click',function(e){if(e.target===this)closeTokenModal();});
+document.getElementById('snap-bg').addEventListener('click',function(e){if(e.target===this)closeSnap();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeSnap();closeModal();closeTokenModal();}});
 
+// ── init ─────────────────────────────────────────────────
 try{var t=localStorage.getItem('liana_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch{}
-load();
+updateTokenIndicator();
+loadFromGitHub();
 </script>
