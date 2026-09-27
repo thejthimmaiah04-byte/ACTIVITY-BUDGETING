@@ -12,6 +12,7 @@
   --text2:    #4A6B4E;
   --text3:    #7A9B7E;
   --dot:      #22C55E;
+  --snap:     #2563EB;
   --shadow:   0 1px 3px rgba(20,50,25,.08),0 4px 16px rgba(20,50,25,.06);
   color-scheme: light;
 }
@@ -35,7 +36,7 @@
 body{
   background:var(--bg);color:var(--text);
   font-family:'DM Sans',system-ui,sans-serif;font-size:14px;line-height:1.5;
-  min-height:100vh;padding-inline:20px;padding-block:0;
+  min-height:100vh;padding-inline:20px;
 }
 
 /* HEADER */
@@ -72,9 +73,9 @@ body{
 .tile{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
 .tile-tab{
   display:flex;align-items:center;justify-content:space-between;
-  padding:9px 12px;background:var(--surface2);border-bottom:1px solid var(--border);gap:8px;
+  padding:8px 10px;background:var(--surface2);border-bottom:1px solid var(--border);gap:6px;
 }
-.tab-left{display:flex;align-items:center;gap:8px;min-width:0}
+.tab-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
 .live-dot{
   width:7px;height:7px;border-radius:50%;background:var(--dot);flex-shrink:0;
   animation:pulse 2s ease-in-out infinite;
@@ -87,21 +88,40 @@ body{
   color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .tab-species{font-size:10px;color:var(--text3);font-style:italic;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tab-btns{display:flex;gap:4px;flex-shrink:0}
+.tab-btns{display:flex;align-items:center;gap:4px;flex-shrink:0}
+
+/* Snap button */
+.btn-snap{
+  display:flex;align-items:center;gap:4px;
+  padding:3px 8px;border-radius:4px;border:1px solid var(--snap);
+  background:transparent;color:var(--snap);
+  font:500 10px/1 'DM Sans',sans-serif;letter-spacing:.06em;
+  text-transform:uppercase;cursor:pointer;transition:.15s;flex-shrink:0;
+}
+.btn-snap:hover{background:var(--snap);color:#fff}
+:root[data-theme="dark"] .btn-snap,
+@media(prefers-color-scheme:dark){ :root:not([data-theme="light"]) .btn-snap{
+  border-color:#60a5fa;color:#60a5fa;
+}}
+
 .tab-btn{
   width:24px;height:24px;border-radius:5px;border:none;background:transparent;
   color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s;
 }
 .tab-btn:hover{background:var(--border);color:var(--text)}
 
+/* STREAM */
 .tile-stream{position:relative;aspect-ratio:16/9;background:#080d09;overflow:hidden}
-.tile-stream img{width:100%;height:100%;object-fit:cover;display:block}
+.tile-stream img.stream-img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
 .tile-offline{
   position:absolute;inset:0;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:10px;
 }
 .tile-offline-msg{font-size:12px;color:var(--text3);text-align:center;line-height:1.6}
 
+/* FOOTER */
 .tile-foot{
   display:flex;align-items:center;justify-content:space-between;
   padding:6px 12px;border-top:1px solid var(--border);
@@ -117,9 +137,9 @@ body{
 .empty-title{font-family:'Playfair Display',serif;font-size:19px;color:var(--text2)}
 .empty-sub{font-size:13px;color:var(--text3);max-width:260px;line-height:1.65}
 
-/* MODAL */
+/* MODAL (edit/add) */
 .modal-bg{
-  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  position:fixed;inset:0;background:rgba(0,0,0,.55);
   display:flex;align-items:center;justify-content:center;
   padding:16px;z-index:100;backdrop-filter:blur(3px);
 }
@@ -138,16 +158,62 @@ body{
 }
 .field input:focus{border-color:var(--accent)}
 .field input::placeholder{color:var(--text3)}
+.field-hint{font-size:10px;color:var(--text3);margin-top:3px}
 .modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
 .btn{padding:8px 16px;border-radius:7px;font:500 13px/1 'DM Sans',sans-serif;cursor:pointer;border:1px solid transparent;transition:.15s}
 .btn:hover{opacity:.85}
 .btn-ghost{background:transparent;border-color:var(--border);color:var(--text2)}
 .btn-primary{background:var(--accent);color:#fff}
-.btn-danger{background:transparent;border-color:#c0392b;color:#c0392b}
+
+/* SNAPSHOT LIGHTBOX */
+.snap-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.85);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:16px;z-index:200;backdrop-filter:blur(4px);gap:12px;
+}
+.snap-bg[hidden]{display:none!important}
+.snap-header{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;max-width:860px;
+}
+.snap-title{
+  font-family:'Playfair Display',serif;font-size:15px;font-weight:600;
+  color:#fff;
+}
+.snap-meta{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+.snap-actions{display:flex;gap:8px;align-items:center}
+.snap-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);
+  font:500 11px/1 'DM Sans',sans-serif;cursor:pointer;transition:.15s;
+}
+.snap-btn:hover{background:rgba(255,255,255,.18)}
+.snap-close{
+  width:30px;height:30px;border-radius:6px;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;
+}
+.snap-close:hover{background:rgba(255,255,255,.18);color:#fff}
+.snap-img-wrap{
+  position:relative;width:100%;max-width:860px;
+  border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;
+  background:#000;aspect-ratio:16/9;
+}
+.snap-img-wrap img{width:100%;height:100%;object-fit:contain;display:block}
+.snap-spinner{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+}
+.snap-spinner svg{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.snap-footer{
+  font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.06em;text-transform:uppercase;
+}
 
 @media(max-width:480px){
   .grid{grid-template-columns:1fr}
   .logo-sub{display:none}
+  .snap-img-wrap{aspect-ratio:4/3}
 }
 </style>
 
@@ -183,6 +249,7 @@ body{
   <div class="grid" id="grid"></div>
 </main>
 
+<!-- Add / Edit modal -->
 <div class="modal-bg" id="modal" hidden>
   <div class="modal">
     <div class="modal-title" id="modal-title">Add Enclosure</div>
@@ -195,8 +262,9 @@ body{
       <input id="inp-species" type="text" placeholder="e.g. Daboia russelii">
     </div>
     <div class="field">
-      <label>Stream URL</label>
-      <input id="inp-url" type="text" placeholder="https://your-tunnel.trycloudflare.com/stream">
+      <label>Camera Base URL</label>
+      <input id="inp-url" type="text" placeholder="https://your-tunnel.trycloudflare.com">
+      <span class="field-hint">The app adds /stream and /snapshot automatically.</span>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
@@ -205,13 +273,48 @@ body{
   </div>
 </div>
 
+<!-- Snapshot lightbox -->
+<div class="snap-bg" id="snap-bg" hidden>
+  <div class="snap-header">
+    <div>
+      <div class="snap-title" id="snap-name">Enclosure 01</div>
+      <div class="snap-meta" id="snap-time">Loading…</div>
+    </div>
+    <div class="snap-actions">
+      <button class="snap-btn" onclick="refreshSnap()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6A4 4 0 1 1 6 2M10 2v4H6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Refresh
+      </button>
+      <button class="snap-close" onclick="closeSnap()" aria-label="Close">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1.5 10.5l9-9M10.5 10.5l-9-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="snap-img-wrap">
+    <img id="snap-img" src="" alt="Snapshot">
+    <div class="snap-spinner" id="snap-spinner">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="10" stroke="rgba(255,255,255,.15)" stroke-width="2.5"/>
+        <path d="M14 4A10 10 0 0 1 24 14" stroke="rgba(255,255,255,.6)" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+  <div class="snap-footer">Grayscale · 4K · 5-minute interval</div>
+</div>
+
 <script>
 const KEY='liana_enc';
 let enc=[];
 let editId=null;
+let snapUrl='';
 
 function load(){
   try{enc=JSON.parse(localStorage.getItem(KEY))||[];}catch{enc=[];}
+  // Migrate old data: if url ends with /stream, strip it to get base
+  enc=enc.map(function(e){
+    if(e.url&&e.url.endsWith('/stream'))e.url=e.url.slice(0,-7);
+    return e;
+  });
   if(!enc.length){
     enc=[{id:'enc1',name:'Enclosure 01',species:'Daboia russelii',url:''}];
     persist();
@@ -223,7 +326,7 @@ function persist(){
   try{localStorage.setItem(KEY,JSON.stringify(enc));}catch{}
 }
 
-function e(s){
+function esc(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
@@ -231,72 +334,117 @@ function shortHost(url){
   try{return new URL(url).hostname;}catch{return url.slice(0,30);}
 }
 
+function streamUrl(base){return base.replace(/\/+$/,'')+'/stream';}
+function snapshotUrl(base){return base.replace(/\/+$/,'')+'/snapshot';}
+
 function offlineSvg(){
-  return `<svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-    <path d="M6 28 Q10 18 18 18 Q26 18 26 24 Q26 30 32 30" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.3"/>
-  </svg>`;
+  return '<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><path d="M6 28 Q10 18 18 18 Q26 18 26 24 Q26 30 32 30" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.3"/></svg>';
 }
 
 function render(){
   const g=document.getElementById('grid');
   if(!enc.length){
-    g.innerHTML=`<div class="empty">
-      ${offlineSvg()}
-      <div class="empty-title">No enclosures yet</div>
-      <div class="empty-sub">Add your first enclosure to start monitoring the live feed.</div>
-    </div>`;
+    g.innerHTML='<div class="empty">'+offlineSvg()+'<div class="empty-title">No enclosures yet</div><div class="empty-sub">Add your first enclosure to start monitoring.</div></div>';
     return;
   }
-  g.innerHTML=enc.map(en=>`
-    <div class="tile">
-      <div class="tile-tab">
-        <div class="tab-left">
-          <span class="live-dot ${en.url?'':'off'}" id="dot-${en.id}"></span>
-          <div class="tab-names">
-            <div class="tab-name">${e(en.name)}</div>
-            ${en.species?`<div class="tab-species">${e(en.species)}</div>`:''}
-          </div>
-        </div>
-        <div class="tab-btns">
-          <button class="tab-btn" onclick="openModal('${en.id}')" title="Edit enclosure" aria-label="Edit">
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M7.5 1l2.5 2.5L3.5 10H1V7.5L7.5 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
-          </button>
-          <button class="tab-btn" onclick="removeEnc('${en.id}')" title="Remove enclosure" aria-label="Remove">
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5l8-8M9.5 9.5l-8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-          </button>
-        </div>
-      </div>
-      <div class="tile-stream" id="stream-${en.id}">
-        ${en.url
-          ? `<img src="${e(en.url)}" alt="${e(en.name)} live feed"
-               onerror="streamError('${en.id}')"
-               onload="streamOk('${en.id}')">`
-          : `<div class="tile-offline">${offlineSvg()}<div class="tile-offline-msg">No stream URL configured<br>Click ✎ to add one</div></div>`
-        }
-      </div>
-      <div class="tile-foot">
-        <span class="foot-label">${en.url?'Live feed':'Not configured'}</span>
-        <span class="foot-url">${en.url?shortHost(en.url):'—'}</span>
-      </div>
-    </div>
-  `).join('');
+  g.innerHTML=enc.map(function(en){
+    var hasUrl=!!en.url;
+    var sUrl=hasUrl?streamUrl(en.url):'';
+    return '<div class="tile">'+
+      '<div class="tile-tab">'+
+        '<div class="tab-left">'+
+          '<span class="live-dot '+(hasUrl?'':'off')+'" id="dot-'+en.id+'"></span>'+
+          '<div class="tab-names">'+
+            '<div class="tab-name">'+esc(en.name)+'</div>'+
+            (en.species?'<div class="tab-species">'+esc(en.species)+'</div>':'')+
+          '</div>'+
+        '</div>'+
+        '<div class="tab-btns">'+
+          (hasUrl?'<button class="btn-snap" onclick="openSnap(\''+en.id+'\')" title="View last snapshot">'+
+            '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="4.5" r="1.5" stroke="currentColor" stroke-width="1.1"/></svg>'+
+            'Snap</button>':'')+
+          '<button class="tab-btn" onclick="openModal(\''+en.id+'\')" title="Edit">'+
+            '<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M7.5 1l2.5 2.5L3.5 10H1V7.5L7.5 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>'+
+          '</button>'+
+          '<button class="tab-btn" onclick="removeEnc(\''+en.id+'\')" title="Remove">'+
+            '<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5l8-8M9.5 9.5l-8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>'+
+          '</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="tile-stream" id="stream-'+en.id+'">'+
+        (hasUrl
+          ? '<img class="stream-img" src="'+esc(sUrl)+'" alt="'+esc(en.name)+' live feed" onerror="streamError(\''+en.id+'\')" onload="streamOk(\''+en.id+'\')">'
+          : '<div class="tile-offline">'+offlineSvg()+'<div class="tile-offline-msg">No URL configured<br>Click ✎ to add one</div></div>'
+        )+
+      '</div>'+
+      '<div class="tile-foot">'+
+        '<span class="foot-label">'+(hasUrl?'Live':'Not configured')+'</span>'+
+        '<span class="foot-url">'+(hasUrl?shortHost(en.url):'—')+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
 }
 
 function streamError(id){
-  const dot=document.getElementById('dot-'+id);
+  var dot=document.getElementById('dot-'+id);
   if(dot)dot.classList.add('off');
-  const s=document.getElementById('stream-'+id);
-  if(s)s.innerHTML=`<div class="tile-offline">${offlineSvg()}<div class="tile-offline-msg">Stream unavailable<br>Check the tunnel is running</div></div>`;
+  var s=document.getElementById('stream-'+id);
+  if(s)s.innerHTML='<div class="tile-offline">'+offlineSvg()+'<div class="tile-offline-msg">Stream unavailable<br>Check the tunnel is running</div></div>';
 }
 
 function streamOk(id){
-  const dot=document.getElementById('dot-'+id);
+  var dot=document.getElementById('dot-'+id);
   if(dot)dot.classList.remove('off');
 }
 
+// Snapshot lightbox
+function openSnap(id){
+  var en=enc.find(function(x){return x.id===id;});
+  if(!en||!en.url)return;
+  snapUrl=snapshotUrl(en.url);
+  document.getElementById('snap-name').textContent=en.name;
+  document.getElementById('snap-time').textContent='Loading snapshot…';
+  var img=document.getElementById('snap-img');
+  img.style.opacity='0';
+  document.getElementById('snap-spinner').style.display='flex';
+  document.getElementById('snap-bg').hidden=false;
+  loadSnap();
+}
+
+function loadSnap(){
+  var img=document.getElementById('snap-img');
+  img.onload=function(){
+    document.getElementById('snap-spinner').style.display='none';
+    img.style.opacity='1';
+    document.getElementById('snap-time').textContent='Last snapshot · '+new Date().toLocaleTimeString();
+  };
+  img.onerror=function(){
+    document.getElementById('snap-spinner').style.display='none';
+    img.style.opacity='0.3';
+    document.getElementById('snap-time').textContent='Snapshot unavailable';
+  };
+  img.src=snapUrl+'?t='+Date.now();
+}
+
+function refreshSnap(){
+  var img=document.getElementById('snap-img');
+  img.style.opacity='0';
+  document.getElementById('snap-spinner').style.display='flex';
+  document.getElementById('snap-time').textContent='Refreshing…';
+  loadSnap();
+}
+
+function closeSnap(){
+  document.getElementById('snap-bg').hidden=true;
+  var img=document.getElementById('snap-img');
+  img.src='';
+  snapUrl='';
+}
+
+// Edit modal
 function openModal(id){
   editId=id||null;
-  const en=id?enc.find(x=>x.id===id):null;
+  var en=id?enc.find(function(x){return x.id===id;}):null;
   document.getElementById('modal-title').textContent=id?'Edit Enclosure':'Add Enclosure';
   document.getElementById('inp-name').value=en?en.name:'';
   document.getElementById('inp-species').value=en?en.species:'';
@@ -311,37 +459,38 @@ function closeModal(){
 }
 
 function saveEnclosure(){
-  const name=document.getElementById('inp-name').value.trim();
-  const species=document.getElementById('inp-species').value.trim();
-  const url=document.getElementById('inp-url').value.trim();
+  var name=document.getElementById('inp-name').value.trim();
+  var species=document.getElementById('inp-species').value.trim();
+  var url=document.getElementById('inp-url').value.trim().replace(/\/stream$/,'').replace(/\/+$/,'');
   if(!name){document.getElementById('inp-name').focus();return;}
   if(editId){
-    const en=enc.find(x=>x.id===editId);
+    var en=enc.find(function(x){return x.id===editId;});
     if(en){en.name=name;en.species=species;en.url=url;}
   }else{
-    enc.push({id:'enc_'+Date.now(),name,species,url});
+    enc.push({id:'enc_'+Date.now(),name:name,species:species,url:url});
   }
   persist();render();closeModal();
 }
 
 function removeEnc(id){
-  enc=enc.filter(x=>x.id!==id);
+  enc=enc.filter(function(x){return x.id!==id;});
   persist();render();
 }
 
 function toggleTheme(){
-  const r=document.documentElement;
-  const cur=r.getAttribute('data-theme');
-  const next=cur==='dark'?'light':'dark';
+  var r=document.documentElement;
+  var cur=r.getAttribute('data-theme');
+  var next=cur==='dark'?'light':'dark';
   r.setAttribute('data-theme',next);
   try{localStorage.setItem('liana_theme',next);}catch{}
 }
 
-document.getElementById('modal').addEventListener('click',function(ev){
-  if(ev.target===this)closeModal();
-});
+// Close on backdrop click
+document.getElementById('modal').addEventListener('click',function(ev){if(ev.target===this)closeModal();});
+document.getElementById('snap-bg').addEventListener('click',function(ev){if(ev.target===this)closeSnap();});
+// Close lightbox on Escape
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){closeSnap();closeModal();}});
 
-// init theme
-try{const t=localStorage.getItem('liana_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch{}
+try{var t=localStorage.getItem('liana_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch{}
 load();
 </script>
