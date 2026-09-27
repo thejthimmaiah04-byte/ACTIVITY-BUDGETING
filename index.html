@@ -1,4 +1,5 @@
 <title>Liana Trust Monitor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#4CAF6A">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -131,24 +132,35 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 /* TOKEN BADGE */
 .token-badge{font-size:10px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
 
-@media(max-width:600px){
-  body{padding-inline:12px;font-size:16px}
-  .grid{grid-template-columns:1fr;gap:14px;padding-block:16px}
-  .hdr{padding-block:14px}
-  .logo-name{font-size:18px}
-  .logo-sub{font-size:11px;letter-spacing:.1em}
-  .btn-add{height:40px;padding:0 14px;font-size:13px}
-  .btn-icon{width:40px;height:40px}
-  .tile-tab{padding:11px 12px}
-  .tab-name{font-size:16px}
-  .tab-species{font-size:12px}
-  .btn-snap{padding:5px 10px;font-size:12px}
-  .tab-btn{width:32px;height:32px}
-  .tile-foot{padding:8px 14px}
-  .foot-label{font-size:12px}
-  .foot-url{font-size:11px;max-width:160px}
-  .tile-offline-msg{font-size:14px}
-  .sync-bar{font-size:13px;padding:10px 14px}
+@media(max-width:768px){
+  body{padding-inline:14px;font-size:17px}
+  .grid{grid-template-columns:1fr;gap:16px;padding-block:18px}
+  .hdr{padding-block:16px}
+  .logo-icon{width:42px;height:42px}
+  .logo-name{font-size:20px}
+  .logo-sub{font-size:12px;letter-spacing:.1em}
+  .btn-add{height:44px;padding:0 16px;font-size:15px;gap:8px}
+  .btn-add svg{width:14px;height:14px}
+  .btn-icon{width:44px;height:44px;border-radius:10px}
+  .btn-icon svg{width:18px;height:18px}
+  .tile-tab{padding:13px 14px}
+  .tab-name{font-size:18px}
+  .tab-species{font-size:13px;margin-top:2px}
+  .live-dot{width:9px;height:9px}
+  .btn-snap{padding:7px 12px;font-size:13px;border-radius:6px;gap:5px}
+  .btn-snap svg{width:13px;height:13px}
+  .tab-btn{width:36px;height:36px;border-radius:8px}
+  .tab-btn svg{width:14px;height:14px}
+  .tile-foot{padding:10px 14px}
+  .foot-label{font-size:13px}
+  .foot-url{font-size:12px;max-width:200px}
+  .tile-offline-msg{font-size:15px;line-height:1.7}
+  .sync-bar{font-size:14px;padding:12px 16px;border-radius:10px}
+  .modal{padding:28px 20px}
+  .modal-title{font-size:20px}
+  .field label{font-size:13px}
+  .field input{padding:12px 14px;font-size:15px}
+  .btn{padding:11px 20px;font-size:15px}
 }
 </style>
 
