@@ -1,4 +1,11 @@
 <title>Liana Trust Monitor</title>
+<meta name="theme-color" content="#4CAF6A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LT Monitor">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap">
 <style>
@@ -485,4 +492,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeSnap()
 try{var t=localStorage.getItem('liana_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch{}
 updateTokenIndicator();
 loadFromGitHub();
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}
 </script>
