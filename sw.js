@@ -1,4 +1,4 @@
-const CACHE = 'liana-v1';
+const CACHE = 'liana-v3';
 const ASSETS = [
   '/ACTIVITY-BUDGETING/',
   '/ACTIVITY-BUDGETING/index.html',
