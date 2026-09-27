@@ -124,9 +124,24 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 /* TOKEN BADGE */
 .token-badge{font-size:10px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
 
-@media(max-width:480px){
-  .grid{grid-template-columns:1fr}
-  .logo-sub{display:none}
+@media(max-width:600px){
+  body{padding-inline:12px;font-size:16px}
+  .grid{grid-template-columns:1fr;gap:14px;padding-block:16px}
+  .hdr{padding-block:14px}
+  .logo-name{font-size:18px}
+  .logo-sub{font-size:11px;letter-spacing:.1em}
+  .btn-add{height:40px;padding:0 14px;font-size:13px}
+  .btn-icon{width:40px;height:40px}
+  .tile-tab{padding:11px 12px}
+  .tab-name{font-size:16px}
+  .tab-species{font-size:12px}
+  .btn-snap{padding:5px 10px;font-size:12px}
+  .tab-btn{width:32px;height:32px}
+  .tile-foot{padding:8px 14px}
+  .foot-label{font-size:12px}
+  .foot-url{font-size:11px;max-width:160px}
+  .tile-offline-msg{font-size:14px}
+  .sync-bar{font-size:13px;padding:10px 14px}
 }
 </style>
 
