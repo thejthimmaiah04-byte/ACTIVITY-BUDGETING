@@ -204,6 +204,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
       <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       Add Enclosure
     </button>
+    <button class="btn-icon" id="lock-btn" onclick="toggleLock()" title="Unlock to enable removing enclosures" aria-label="Lock/unlock remove">
+      <svg id="lock-icon" width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="3" y="7" width="9" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+    </button>
     <button class="btn-icon" onclick="openTokenModal()" title="GitHub sync settings" id="token-btn" aria-label="Sync settings">
       <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1C4 1 1 4 1 7.5c0 2.9 1.9 5.4 4.5 6.3.3.1.4-.1.4-.3V12c-1.8.4-2.2-.9-2.2-.9-.3-.8-.7-1-7-.1-.5-.2-1-.5-1-.9 0-.4.1-.7.4-.9C4 9 4.3 8 3.5 7a1 1 0 0 0-.1-.4c0-.7.6-1.4 1.4-1.4.8 0 1.4.6 1.4 1.4a3.5 3.5 0 0 1-1 2.4c.2.1.4.1.6.1 1.8 0 2-.1 2-.8V5.5c0-.8.7-1.5 1.5-1.5H9c.8 0 1.5.7 1.5 1.5V8c0 .7.2.8 2 .8.2 0 .4 0 .6-.1a3.5 3.5 0 0 1-1-2.4c0-.8.6-1.4 1.4-1.4.8 0 1.4.7 1.4 1.4a1 1 0 0 0-.1.4c-.8 1-.5 2 .7 2.1.3.2.4.5.4.9 0 .4-.5.7-1 .9-.6.1-1 .1-1.2.1-.3.8-.7 1-.7 1s-.4 1.3-2.2.9v1.5c0 .2.1.4.4.3C12.1 12.9 14 10.4 14 7.5 14 4 11 1 7.5 1z" stroke="currentColor" stroke-width=".5" fill="currentColor" opacity=".7"/></svg>
     </button>
@@ -407,7 +410,7 @@ function render(){
         '<div class="tab-btns">'+
           (has?'<button class="btn-snap" onclick="openSnap(\''+en.id+'\')" title="View last snapshot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="4.5" r="1.5" stroke="currentColor" stroke-width="1.1"/></svg> Snap</button>':'')+
           '<button class="tab-btn" onclick="openModal(\''+en.id+'\')" title="Edit"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M7.5 1l2.5 2.5L3.5 10H1V7.5L7.5 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></button>'+
-          '<button class="tab-btn" onclick="removeEnc(\''+en.id+'\')" title="Remove"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5l8-8M9.5 9.5l-8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>'+
+          '<button class="tab-btn remove-btn" onclick="removeEnc(\''+en.id+'\')" title="Remove (unlock first)" id="rm-'+en.id+'" style="opacity:0.3;cursor:not-allowed" disabled><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5l8-8M9.5 9.5l-8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>'+
         '</div>'+
       '</div>'+
       '<div class="tile-stream" id="stream-'+en.id+'">'+
@@ -416,7 +419,6 @@ function render(){
           : '<div class="tile-offline">'+offlineSvg()+'<div class="tile-offline-msg">No URL configured<br>Click ✎ to add one</div></div>'
         )+
       '</div>'+
-      '<div class="tile-foot"><span class="foot-label">'+(has?'Live':'Not configured')+'</span><span class="foot-url">'+(has?shortHost(en.url):'—')+'</span></div>'+
     '</div>';
   }).join('');
 }
@@ -462,8 +464,12 @@ async function saveEnclosure(){
 }
 
 function removeEnc(id){
+  if(!unlocked) return;
   enc=enc.filter(function(x){return x.id!==id;});
   persistLocal();render();
+  unlocked=false;
+  var btn=document.getElementById('lock-btn');
+  if(btn){btn.style.borderColor='';btn.style.color='';}
   var token=getToken();
   if(token){syncBar('loading','Syncing…');pushToGitHub().then(function(ok){ok?syncBar('ok','Removed — synced'):syncBar('err','Sync failed');});}
 }
@@ -509,6 +515,37 @@ function loadSnap(){
 }
 function refreshSnap(){var img=document.getElementById('snap-img');img.style.opacity='0';document.getElementById('snap-spinner').style.display='flex';document.getElementById('snap-time').textContent='Refreshing…';loadSnap();}
 function closeSnap(){document.getElementById('snap-bg').hidden=true;document.getElementById('snap-img').src='';snapUrl='';}
+
+// ── lock / unlock remove ─────────────────────────────────
+var unlocked = false;
+function toggleLock(){
+  unlocked = !unlocked;
+  var btn = document.getElementById('lock-btn');
+  var icon = document.getElementById('lock-icon');
+  document.querySelectorAll('.remove-btn').forEach(function(b){
+    if(unlocked){
+      b.disabled = false;
+      b.style.opacity = '1';
+      b.style.cursor = 'pointer';
+      b.title = 'Remove enclosure';
+    } else {
+      b.disabled = true;
+      b.style.opacity = '0.3';
+      b.style.cursor = 'not-allowed';
+      b.title = 'Remove (unlock first)';
+    }
+  });
+  if(unlocked){
+    btn.style.borderColor = '#ef4444';
+    btn.style.color = '#ef4444';
+    icon.innerHTML = '<rect x="3" y="7" width="9" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a2.5 2.5 0 0 1 5 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="10" y1="3.5" x2="10" y2="7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>';
+    syncBar('err','Remove unlocked — click ✕ to delete an enclosure');
+  } else {
+    btn.style.borderColor = '';
+    btn.style.color = '';
+    icon.innerHTML = '<rect x="3" y="7" width="9" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>';
+  }
+}
 
 // ── theme ────────────────────────────────────────────────
 function toggleTheme(){
