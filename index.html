@@ -1,39 +1,41 @@
-<title>Liana Trust Monitor</title>
+<title>EthoGrid</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<meta name="theme-color" content="#4CAF6A">
+<meta name="theme-color" content="#E6A817">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="LT Monitor">
+<meta name="apple-mobile-web-app-title" content="EthoGrid">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap">
 <style>
 :root {
-  --bg:#F1F5F0;--surface:#FFFFFF;--surface2:#E8EEE7;
-  --border:#C4D4C2;--accent:#2E6E3E;
-  --text:#192B1C;--text2:#4A6B4E;--text3:#7A9B7E;
-  --dot:#22C55E;--snap:#2563EB;
-  --shadow:0 1px 3px rgba(20,50,25,.08),0 4px 16px rgba(20,50,25,.06);
+  --bg:#F5F3EE;--surface:#FFFFFF;--surface2:#EDE9E2;
+  --border:#D8D2C8;--accent:#B8860B;
+  --text:#1A1A18;--text2:#555548;--text3:#999080;
+  --dot:#22C55E;--snap:#B8860B;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.05);
   color-scheme:light;
 }
 @media(prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#0D1610;--surface:#131E14;--surface2:#1A271B;
-    --border:#263829;--accent:#4CAF6A;
-    --text:#D6EDD8;--text2:#7AAE80;--text3:#4A7050;
-    --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+    --bg:#111111;--surface:#1C1C1C;--surface2:#242424;
+    --border:#2E2E2E;--accent:#E6A817;
+    --text:#F5F5F5;--text2:#AAAAAA;--text3:#666666;
+    --dot:#4ADE80;--snap:#E6A817;
+    --shadow:0 1px 3px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.35);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0D1610;--surface:#131E14;--surface2:#1A271B;
-  --border:#263829;--accent:#4CAF6A;
-  --text:#D6EDD8;--text2:#7AAE80;--text3:#4A7050;
-  --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  --bg:#111111;--surface:#1C1C1C;--surface2:#242424;
+  --border:#2E2E2E;--accent:#E6A817;
+  --text:#F5F5F5;--text2:#AAAAAA;--text3:#666666;
+  --dot:#4ADE80;--snap:#E6A817;
+  --shadow:0 1px 3px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.35);
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -44,7 +46,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .logo-icon{width:34px;height:34px;flex-shrink:0}
 .logo-text{display:flex;flex-direction:column;gap:1px}
-.logo-name{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:600;color:var(--text);line-height:1.2}
+.logo-name{font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;font-weight:600;color:var(--text);line-height:1.2;letter-spacing:-.02em}
 .logo-sub{font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase}
 .hdr-actions{display:flex;align-items:center;gap:8px}
 .btn-icon{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
@@ -61,8 +63,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 :root[data-theme="dark"] .sync-bar.ok,:root[data-theme="dark"] .sync-bar.err{filter:brightness(.8)}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
 
-/* GRID */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:20px;padding-block:20px;}
+/* GRID — 2 columns by default; single tile gets its own centered large layout */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding-block:20px;}
+.grid.grid-single{grid-template-columns:1fr;max-width:860px;margin-inline:auto;width:100%;}
 
 /* TILE */
 .tile{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
@@ -72,7 +75,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .live-dot.off{background:var(--text3);animation:none}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 .tab-names{min-width:0}
-.tab-name{font-family:'Playfair Display',Georgia,serif;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tab-name{font-family:'Space Grotesk',system-ui,sans-serif;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tab-species{font-size:10px;color:var(--text3);font-style:italic;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tab-btns{display:flex;align-items:center;gap:4px;flex-shrink:0}
 .btn-snap{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;border:1px solid var(--snap);background:transparent;color:var(--snap);font:500 10px/1 'DM Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:.15s;}
@@ -85,20 +88,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .tile-stream img{width:100%;height:100%;object-fit:cover;display:block;}
 .tile-offline{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
 .tile-offline-msg{font-size:12px;color:var(--text3);text-align:center;line-height:1.6}
-.tile-foot{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-top:1px solid var(--border);}
-.foot-label{font-size:10px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase}
-.foot-url{font-size:10px;color:var(--text3);font-family:monospace;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* EMPTY */
 .empty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:72px 20px;text-align:center;}
-.empty-title{font-family:'Playfair Display',serif;font-size:19px;color:var(--text2)}
+.empty-title{font-family:'Space Grotesk',sans-serif;font-size:19px;color:var(--text2)}
 .empty-sub{font-size:13px;color:var(--text3);max-width:260px;line-height:1.65}
 
 /* MODALS */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100;backdrop-filter:blur(3px);}
 .modal-bg[hidden]{display:none!important}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;width:100%;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,.25);}
-.modal-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px}
+.modal-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px}
 .modal-sub{font-size:12px;color:var(--text3);margin-bottom:20px;line-height:1.5}
 .field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
 .field label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
@@ -117,7 +117,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .snap-bg{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;z-index:200;backdrop-filter:blur(4px);gap:12px;}
 .snap-bg[hidden]{display:none!important}
 .snap-header{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:860px;}
-.snap-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:#fff;}
+.snap-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:#fff;}
 .snap-meta{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
 .snap-actions{display:flex;gap:8px;align-items:center}
 .snap-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);font:500 11px/1 'DM Sans',sans-serif;cursor:pointer;transition:.15s;}
@@ -131,13 +131,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 @keyframes spin{to{transform:rotate(360deg)}}
 .snap-footer{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.06em;text-transform:uppercase}
 
-/* TOKEN BADGE */
-.token-badge{font-size:10px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
-
 @media(max-width:768px){
   body{padding-inline:16px;font-size:18px}
-
-  /* Header */
   .hdr{padding-block:18px;gap:10px}
   .logo-icon{width:44px;height:44px}
   .logo-name{font-size:21px}
@@ -145,17 +140,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
   .hdr-actions{gap:8px}
   .btn-add{height:46px;padding:0 16px;font-size:15px;border-radius:10px}
   .btn-icon{width:46px;height:46px;border-radius:10px}
-
-  /* Grid — always single full-width column */
-  .grid{
-    display:flex!important;
-    flex-direction:column!important;
-    gap:18px;
-    padding-block:18px;
-    width:100%;
+  .grid,.grid.grid-single{
+    display:flex!important;flex-direction:column!important;
+    gap:18px;padding-block:18px;width:100%;max-width:none;margin-inline:0;
   }
-
-  /* Tile */
   .tile{width:100%;box-sizing:border-box}
   .tile-tab{padding:14px 16px;gap:10px}
   .tab-left{gap:10px}
@@ -165,15 +153,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
   .tab-btns{gap:6px}
   .btn-snap{padding:8px 14px;font-size:14px;border-radius:7px}
   .tab-btn{width:38px;height:38px;border-radius:8px}
-  .tile-foot{padding:11px 16px}
-  .foot-label{font-size:13px}
-  .foot-url{font-size:12px}
   .tile-offline-msg{font-size:16px;line-height:1.8}
-
-  /* Sync bar */
   .sync-bar{font-size:14px;padding:13px 16px;margin-block:12px 0;border-radius:10px}
-
-  /* Modal */
   .modal{padding:28px 20px;border-radius:16px}
   .modal-title{font-size:22px;margin-bottom:8px}
   .modal-sub{font-size:14px;margin-bottom:22px}
@@ -188,15 +169,19 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 
 <header class="hdr">
   <a class="logo" href="#">
-    <svg class="logo-icon" viewBox="0 0 34 34" fill="none">
-      <circle cx="17" cy="17" r="16" fill="var(--surface2)" stroke="var(--border)" stroke-width="1.2"/>
-      <path d="M7 22 Q10 14 15 14 Q20 14 20 19 Q20 24 25 24 Q28 24 28 20" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      <circle cx="7" cy="22" r="1.8" fill="var(--accent)"/>
-      <path d="M7 22 L5 20.5 M7 22 L5 23.5" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/>
+    <svg class="logo-icon" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1" y="1" width="32" height="32" rx="8" fill="var(--surface2)" stroke="var(--border)" stroke-width="1"/>
+      <line x1="12" y1="5" x2="12" y2="29" stroke="var(--accent)" stroke-width=".6" opacity=".35"/>
+      <line x1="22" y1="5" x2="22" y2="29" stroke="var(--accent)" stroke-width=".6" opacity=".35"/>
+      <line x1="5" y1="12" x2="29" y2="12" stroke="var(--accent)" stroke-width=".6" opacity=".35"/>
+      <line x1="5" y1="22" x2="29" y2="22" stroke="var(--accent)" stroke-width=".6" opacity=".35"/>
+      <path d="M5 20 Q8 13 12 17 Q17 22 22 15 Q26 10 29 14" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle cx="17" cy="25" r="2.4" fill="var(--dot)" opacity=".9"/>
+      <circle cx="17" cy="25" r=".9" fill="#fff" opacity=".75"/>
     </svg>
     <div class="logo-text">
-      <span class="logo-name">Liana Trust</span>
-      <span class="logo-sub">Activity Monitor</span>
+      <span class="logo-name">EthoGrid</span>
+      <span class="logo-sub">Liana Trust</span>
     </div>
   </a>
   <div class="hdr-actions">
@@ -208,7 +193,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
       <svg id="lock-icon" width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="3" y="7" width="9" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
     </button>
     <button class="btn-icon" onclick="openTokenModal()" title="GitHub sync settings" id="token-btn" aria-label="Sync settings">
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1C4 1 1 4 1 7.5c0 2.9 1.9 5.4 4.5 6.3.3.1.4-.1.4-.3V12c-1.8.4-2.2-.9-2.2-.9-.3-.8-.7-1-7-.1-.5-.2-1-.5-1-.9 0-.4.1-.7.4-.9C4 9 4.3 8 3.5 7a1 1 0 0 0-.1-.4c0-.7.6-1.4 1.4-1.4.8 0 1.4.6 1.4 1.4a3.5 3.5 0 0 1-1 2.4c.2.1.4.1.6.1 1.8 0 2-.1 2-.8V5.5c0-.8.7-1.5 1.5-1.5H9c.8 0 1.5.7 1.5 1.5V8c0 .7.2.8 2 .8.2 0 .4 0 .6-.1a3.5 3.5 0 0 1-1-2.4c0-.8.6-1.4 1.4-1.4.8 0 1.4.7 1.4 1.4a1 1 0 0 0-.1.4c-.8 1-.5 2 .7 2.1.3.2.4.5.4.9 0 .4-.5.7-1 .9-.6.1-1 .1-1.2.1-.3.8-.7 1-.7 1s-.4 1.3-2.2.9v1.5c0 .2.1.4.4.3C12.1 12.9 14 10.4 14 7.5 14 4 11 1 7.5 1z" stroke="currentColor" stroke-width=".5" fill="currentColor" opacity=".7"/></svg>
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1C4 1 1 4 1 7.5c0 2.9 1.9 5.4 4.5 6.3.3.1.4-.1.4-.3V12c-1.8.4-2.2-.9-2.2-.9-.3-.8-.7-1-.7-1-.5-.2-1-.5-1-.9 0-.4.1-.7.4-.9C4 9 4.3 8 3.5 7a1 1 0 0 0-.1-.4c0-.7.6-1.4 1.4-1.4.8 0 1.4.6 1.4 1.4a3.5 3.5 0 0 1-1 2.4c.2.1.4.1.6.1 1.8 0 2-.1 2-.8V5.5c0-.8.7-1.5 1.5-1.5H9c.8 0 1.5.7 1.5 1.5V8c0 .7.2.8 2 .8.2 0 .4 0 .6-.1a3.5 3.5 0 0 1-1-2.4c0-.8.6-1.4 1.4-1.4.8 0 1.4.7 1.4 1.4a1 1 0 0 0-.1.4c-.8 1-.5 2 .7 2.1.3.2.4.5.4.9 0 .4-.5.7-1 .9-.6.1-1 .1-1.2.1-.3.8-.7 1-.7 1s-.4 1.3-2.2.9v1.5c0 .2.1.4.4.3C12.1 12.9 14 10.4 14 7.5 14 4 11 1 7.5 1z" stroke="currentColor" stroke-width=".5" fill="currentColor" opacity=".7"/></svg>
     </button>
     <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
       <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
@@ -260,7 +245,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
     <div class="field">
       <label>GitHub Token</label>
       <input id="inp-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-      <span class="field-hint">Token needs <strong>Contents: Read & Write</strong> permission on this repo.</span>
+      <span class="field-hint">Token needs <strong>Contents: Read &amp; Write</strong> permission on this repo.</span>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="clearToken()">Clear Token</button>
@@ -296,7 +281,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
       </svg>
     </div>
   </div>
-  <div class="snap-footer">Grayscale · 4K · 5-minute interval</div>
+  <div class="snap-footer">Grayscale · 4K · 10-minute interval</div>
 </div>
 
 <script>
@@ -311,11 +296,9 @@ const TK_KEY  = 'liana_ghtoken';
 let enc = [];
 let editId = null;
 let snapUrl = '';
-let cfgSha = '';  // needed for GitHub PUT
+let cfgSha = '';
 
-// ── helpers ────────────────────────────────────────────
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function shortHost(u){try{return new URL(u).hostname;}catch{return u.slice(0,30);}}
 function streamUrl(b){return b.replace(/\/+$/,'')+'/stream';}
 function snapShotUrl(b){return b.replace(/\/+$/,'')+'/snapshot';}
 function getToken(){try{return localStorage.getItem(TK_KEY)||'';}catch{return '';}}
@@ -333,7 +316,13 @@ function offlineSvg(){
   return '<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><path d="M6 28 Q10 18 18 18 Q26 18 26 24 Q26 30 32 30" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.3"/></svg>';
 }
 
-// ── GitHub read ─────────────────────────────────────────
+function updateGridLayout(){
+  var g=document.getElementById('grid');
+  if(enc.length===1){g.classList.add('grid-single');}
+  else{g.classList.remove('grid-single');}
+}
+
+// GitHub read — silent load
 async function loadFromGitHub(){
   try{
     var r=await fetch(RAW_URL+'?t='+Date.now());
@@ -342,16 +331,13 @@ async function loadFromGitHub(){
     if(data.enclosures&&data.enclosures.length){
       enc=data.enclosures;
       persistLocal();
-      syncBar('ok','Loaded from GitHub');
       render();
     }
   }catch(e){
-    // fall back to localStorage silently
     try{enc=JSON.parse(localStorage.getItem(LS_KEY))||[];}catch{enc=[];}
     if(!enc.length){enc=[{id:'enc1',name:'Enclosure 01',species:'Daboia russelii',url:''}];}
     render();
   }
-  // Also fetch SHA for future writes
   fetchSha();
 }
 
@@ -365,7 +351,7 @@ async function fetchSha(){
   }catch{}
 }
 
-// ── GitHub write ────────────────────────────────────────
+// GitHub write
 async function pushToGitHub(){
   var token=getToken();
   if(!token)return false;
@@ -388,8 +374,9 @@ async function pushToGitHub(){
   }catch{return false;}
 }
 
-// ── render ──────────────────────────────────────────────
+// render
 function render(){
+  updateGridLayout();
   var g=document.getElementById('grid');
   if(!enc.length){
     g.innerHTML='<div class="empty">'+offlineSvg()+'<div class="empty-title">No enclosures yet</div><div class="empty-sub">Add your first enclosure to start monitoring.</div></div>';
@@ -430,7 +417,7 @@ function streamError(id){
 }
 function streamOk(id){var d=document.getElementById('dot-'+id);if(d)d.classList.remove('off');}
 
-// ── enclosure modal ─────────────────────────────────────
+// enclosure modal
 function openModal(id){
   editId=id||null;
   var en=id?enc.find(function(x){return x.id===id;}):null;
@@ -474,7 +461,7 @@ function removeEnc(id){
   if(token){syncBar('loading','Syncing…');pushToGitHub().then(function(ok){ok?syncBar('ok','Removed — synced'):syncBar('err','Sync failed');});}
 }
 
-// ── token modal ─────────────────────────────────────────
+// token modal
 function openTokenModal(){
   document.getElementById('inp-token').value=getToken();
   document.getElementById('token-modal').hidden=false;
@@ -496,7 +483,7 @@ function updateTokenIndicator(){
   btn.style.color=getToken()?'var(--accent)':'';
 }
 
-// ── snapshot lightbox ────────────────────────────────────
+// snapshot lightbox
 function openSnap(id){
   var en=enc.find(function(x){return x.id===id;});if(!en||!en.url)return;
   snapUrl=snapShotUrl(en.url);
@@ -516,7 +503,7 @@ function loadSnap(){
 function refreshSnap(){var img=document.getElementById('snap-img');img.style.opacity='0';document.getElementById('snap-spinner').style.display='flex';document.getElementById('snap-time').textContent='Refreshing…';loadSnap();}
 function closeSnap(){document.getElementById('snap-bg').hidden=true;document.getElementById('snap-img').src='';snapUrl='';}
 
-// ── lock / unlock remove ─────────────────────────────────
+// lock / unlock remove
 var unlocked = false;
 function toggleLock(){
   unlocked = !unlocked;
@@ -547,19 +534,19 @@ function toggleLock(){
   }
 }
 
-// ── theme ────────────────────────────────────────────────
+// theme
 function toggleTheme(){
   var r=document.documentElement;var next=r.getAttribute('data-theme')==='dark'?'light':'dark';
   r.setAttribute('data-theme',next);try{localStorage.setItem('liana_theme',next);}catch{}
 }
 
-// ── backdrop clicks & keyboard ───────────────────────────
+// backdrop clicks & keyboard
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 document.getElementById('token-modal').addEventListener('click',function(e){if(e.target===this)closeTokenModal();});
 document.getElementById('snap-bg').addEventListener('click',function(e){if(e.target===this)closeSnap();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeSnap();closeModal();closeTokenModal();}});
 
-// ── init ─────────────────────────────────────────────────
+// init
 try{var t=localStorage.getItem('liana_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch{}
 updateTokenIndicator();
 loadFromGitHub();
