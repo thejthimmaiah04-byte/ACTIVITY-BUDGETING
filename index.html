@@ -10,7 +10,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"></noscript>
 <style>
 :root {
   --bg:#F5F3EE;--surface:#FFFFFF;--surface2:#EDE9E2;
@@ -322,22 +323,26 @@ function updateGridLayout(){
   else{g.classList.remove('grid-single');}
 }
 
-// GitHub read — silent load
+// GitHub read — render from cache instantly, sync in background
 async function loadFromGitHub(){
+  // Paint immediately from localStorage — no network wait
+  try{enc=JSON.parse(localStorage.getItem(LS_KEY))||[];}catch{enc=[];}
+  if(!enc.length){enc=[{id:'enc1',name:'Enclosure 01',species:'Daboia russelii',url:''}];}
+  render();
+
+  // Background sync with GitHub — re-render only if something changed
   try{
     var r=await fetch(RAW_URL+'?t='+Date.now());
-    if(!r.ok)throw new Error('not found');
+    if(!r.ok)throw new Error();
     var data=await r.json();
     if(data.enclosures&&data.enclosures.length){
-      enc=data.enclosures;
-      persistLocal();
-      render();
+      if(JSON.stringify(data.enclosures)!==JSON.stringify(enc)){
+        enc=data.enclosures;
+        persistLocal();
+        render();
+      }
     }
-  }catch(e){
-    try{enc=JSON.parse(localStorage.getItem(LS_KEY))||[];}catch{enc=[];}
-    if(!enc.length){enc=[{id:'enc1',name:'Enclosure 01',species:'Daboia russelii',url:''}];}
-    render();
-  }
+  }catch(e){}
   fetchSha();
 }
 
