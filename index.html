@@ -177,6 +177,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .splash-eg-name{font-family:'Space Grotesk',system-ui,sans-serif;font-size:38px;font-weight:600;color:#F5F5F5;letter-spacing:-.03em;margin-top:8px;}
 .splash-trust-label{font-size:11px;color:#444;letter-spacing:.08em;text-transform:uppercase;margin-top:4px;}
 
+/* QUALITY CHIP */
+.stream-quality-chip{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:2px 6px;font-size:9px;font-weight:600;color:rgba(255,255,255,.65);letter-spacing:.07em;backdrop-filter:blur(4px);pointer-events:none;transition:color .3s,border-color .3s;}
+.stream-quality-chip.q-medium{color:rgba(167,243,208,.9);border-color:rgba(167,243,208,.2);}
+.stream-quality-chip.q-low{color:rgba(251,191,36,.9);border-color:rgba(251,191,36,.25);}
+
 /* STREAM OVERLAY */
 .stream-live-badge{position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 9px;font-size:10px;font-weight:500;color:rgba(255,255,255,.85);letter-spacing:.05em;backdrop-filter:blur(4px);pointer-events:none;transition:.3s;}
 .stream-live-badge.offline{border-color:rgba(239,68,68,.3);color:rgba(239,68,68,.8);}
@@ -379,7 +384,44 @@ let snapUrl = '';
 let cfgSha = '';
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function streamUrl(b){return b.replace(/\/+$/,'')+'/stream';}
+// ── Adaptive stream quality ───────────────────────────────────
+var QUALITY_SUFFIX = {high:'/stream', medium:'/stream/medium', low:'/stream/low'};
+var QUALITY_LABELS  = {high:'HD', medium:'SD', low:'LQ'};
+var QUALITY_CLASSES = {high:'', medium:'q-medium', low:'q-low'};
+var currentQuality  = 'high';
+
+function qualityLabel(){return QUALITY_LABELS[currentQuality];}
+function qualityChipClass(){return QUALITY_CLASSES[currentQuality];}
+
+function detectQuality(){
+  var conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  if(!conn)return 'high';
+  var dl=conn.downlink;         // Mbps estimate (may be 0 if unavailable)
+  var et=conn.effectiveType;    // 'slow-2g','2g','3g','4g'
+  if(et==='slow-2g'||et==='2g'||(dl>0&&dl<1))return 'low';
+  if(et==='3g'||(dl>0&&dl<4))return 'medium';
+  return 'high';
+}
+
+function applyQuality(q){
+  if(q===currentQuality)return;
+  currentQuality=q;
+  enc.forEach(function(en){
+    if(!en.url)return;
+    var base=en.url.replace(/\/+$/,'');
+    var img=document.querySelector('#stream-'+en.id+' img');
+    if(img)img.src=base+QUALITY_SUFFIX[q];
+    var chip=document.getElementById('qchip-'+en.id);
+    if(chip){chip.textContent=QUALITY_LABELS[q];chip.className='stream-quality-chip '+QUALITY_CLASSES[q];}
+  });
+}
+
+function checkQuality(){applyQuality(detectQuality());}
+
+if(navigator.connection)navigator.connection.addEventListener('change',checkQuality);
+setInterval(checkQuality,30000);
+
+function streamUrl(b){return b.replace(/\/+$/,'')+QUALITY_SUFFIX[currentQuality];}
 function snapShotUrl(b){return b.replace(/\/+$/,'')+'/snapshot';}
 function getToken(){try{return localStorage.getItem(TK_KEY)||'';}catch{return '';}}
 function persistLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify(enc));}catch{}}
@@ -488,6 +530,7 @@ function render(){
         (has
           ? '<img src="'+esc(su)+'" alt="'+esc(en.name)+' live feed" onerror="streamError(\''+en.id+'\')" onload="streamOk(\''+en.id+'\')">'+
             '<div class="stream-live-badge" id="badge-'+en.id+'"><span class="live-pip" id="pip-'+en.id+'"></span><span id="badgetxt-'+en.id+'">LIVE</span></div>'+
+            '<div class="stream-quality-chip '+qualityChipClass()+'" id="qchip-'+en.id+'">'+qualityLabel()+'</div>'+
             '<div class="stream-expand-hint">tap to expand</div>'
           : '<div class="tile-offline">'+
               '<svg class="offline-icon" width="38" height="38" viewBox="0 0 38 38" fill="none"><circle cx="19" cy="19" r="17" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M12 19h14M19 12v14" stroke="rgba(255,255,255,.25)" stroke-width="1.5" stroke-linecap="round"/></svg>'+
