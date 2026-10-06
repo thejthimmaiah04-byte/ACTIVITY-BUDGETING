@@ -1,13 +1,13 @@
 {
-  "name": "Liana Trust Monitor",
-  "short_name": "LT Monitor",
-  "description": "Live snake enclosure monitoring — Liana Trust",
+  "name": "EthoGrid",
+  "short_name": "EthoGrid",
+  "description": "Live enclosure monitoring — Liana Trust",
   "start_url": "/ACTIVITY-BUDGETING/",
   "scope": "/ACTIVITY-BUDGETING/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#0D1610",
-  "theme_color": "#4CAF6A",
+  "background_color": "#111111",
+  "theme_color": "#E6A817",
   "icons": [
     {
       "src": "icon-192.png",
