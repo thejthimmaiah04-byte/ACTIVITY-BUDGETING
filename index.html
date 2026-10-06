@@ -170,8 +170,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 /* SPLASH SCREEN */
 #splash{position:fixed;inset:0;background:#111111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;z-index:9999;transition:opacity .5s ease;}
 #splash.hide{opacity:0;pointer-events:none;}
-.splash-circle{width:120px;height:120px;border-radius:50%;background:#2D6A4F;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.splash-circle img{width:78px;height:78px;object-fit:contain;}
+.splash-circle{width:180px;height:180px;border-radius:50%;background:#2D6A4F;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+.splash-circle img{width:100%;height:100%;object-fit:cover;}
 .splash-name{font-family:'Space Grotesk',system-ui,sans-serif;font-size:28px;font-weight:600;color:#F5F5F5;letter-spacing:-.02em;}
 .splash-by{font-size:12px;color:#555;letter-spacing:.1em;text-transform:uppercase;}
 </style>
