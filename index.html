@@ -166,7 +166,26 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
   .modal-foot{gap:10px;margin-top:24px}
   .btn{padding:13px 22px;font-size:16px;border-radius:10px}
 }
+
+/* SPLASH SCREEN */
+#splash{position:fixed;inset:0;background:#111111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;z-index:9999;transition:opacity .5s ease;}
+#splash.hide{opacity:0;pointer-events:none;}
+.splash-circle{width:120px;height:120px;border-radius:50%;background:#2D6A4F;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.splash-circle img{width:78px;height:78px;object-fit:contain;}
+.splash-name{font-family:'Space Grotesk',system-ui,sans-serif;font-size:28px;font-weight:600;color:#F5F5F5;letter-spacing:-.02em;}
+.splash-by{font-size:12px;color:#555;letter-spacing:.1em;text-transform:uppercase;}
 </style>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-circle">
+    <img src="liana-logo.png" alt="Liana Trust">
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+    <span class="splash-name">EthoGrid</span>
+    <span class="splash-by">by Liana Trust</span>
+  </div>
+</div>
 
 <header class="hdr">
   <a class="logo" href="#">
@@ -289,6 +308,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 </div>
 
 <script>
+// Splash dismiss
+(function(){
+  var sp=document.getElementById('splash');
+  setTimeout(function(){sp.classList.add('hide');setTimeout(function(){sp.hidden=true;},500);},2200);
+})();
+
 const REPO    = 'thejthimmaiah04-byte/ACTIVITY-BUDGETING';
 const BRANCH  = 'main';
 const CFG     = 'config.json';
