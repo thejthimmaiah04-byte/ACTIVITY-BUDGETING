@@ -77,7 +77,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 .tab-names{min-width:0}
 .tab-name{font-family:'Space Grotesk',system-ui,sans-serif;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.tab-species{font-size:10px;color:var(--text3);font-style:italic;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tab-species{font-size:10px;color:var(--text3);font-style:italic;letter-spacing:.04em;word-break:break-word;line-height:1.4;}
 .tab-btns{display:flex;align-items:center;gap:4px;flex-shrink:0}
 .btn-snap{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;border:1px solid var(--snap);background:transparent;color:var(--snap);font:500 10px/1 'DM Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:.15s;}
 .btn-snap:hover{background:var(--snap);color:#fff}
@@ -168,22 +168,60 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 }
 
 /* SPLASH SCREEN */
-#splash{position:fixed;inset:0;background:#111111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;z-index:9999;transition:opacity .5s ease;}
+#splash{position:fixed;inset:0;background:#111111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:9999;transition:opacity .6s ease;}
 #splash.hide{opacity:0;pointer-events:none;}
-.splash-circle{width:180px;height:180px;border-radius:50%;background:#2D6A4F;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
-.splash-circle img{width:100%;height:100%;object-fit:cover;}
-.splash-name{font-family:'Space Grotesk',system-ui,sans-serif;font-size:28px;font-weight:600;color:#F5F5F5;letter-spacing:-.02em;}
-.splash-by{font-size:12px;color:#555;letter-spacing:.1em;text-transform:uppercase;}
+.splash-eg-icon{width:120px;height:120px;flex-shrink:0;}
+.splash-eg-name{font-family:'Space Grotesk',system-ui,sans-serif;font-size:38px;font-weight:600;color:#F5F5F5;letter-spacing:-.03em;}
+.splash-trust{display:flex;align-items:center;gap:10px;margin-top:12px;}
+.splash-trust-circle{width:36px;height:36px;border-radius:50%;background:#2D6A4F;overflow:hidden;flex-shrink:0;}
+.splash-trust-circle img{width:100%;height:100%;object-fit:cover;}
+.splash-trust-label{font-size:12px;color:#555;letter-spacing:.08em;text-transform:uppercase;}
+
+/* STREAM OVERLAY */
+.stream-live-badge{position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 9px;font-size:10px;font-weight:500;color:rgba(255,255,255,.85);letter-spacing:.05em;backdrop-filter:blur(4px);pointer-events:none;transition:.3s;}
+.stream-live-badge.offline{border-color:rgba(239,68,68,.3);color:rgba(239,68,68,.8);}
+.live-pip{width:6px;height:6px;border-radius:50%;background:#4ADE80;flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
+.live-pip.off{background:#ef4444;animation:none;}
+.stream-expand-hint{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.45);border-radius:5px;padding:3px 6px;font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.05em;pointer-events:none;opacity:0;transition:opacity .2s;}
+.tile-stream:hover .stream-expand-hint{opacity:1;}
+.tile-stream{cursor:pointer;}
+
+/* TILE FOOTER */
+.tile-footer{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-top:1px solid var(--border);background:var(--surface2);}
+.tile-footer-item{font-size:10px;color:var(--text3);letter-spacing:.04em;}
+.tile-footer-item span{color:var(--text2);}
+
+/* OFFLINE STATE improved */
+.tile-offline{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#080d09;}
+.offline-icon{opacity:.25;}
+.offline-title{font-size:13px;font-weight:500;color:rgba(255,255,255,.5);}
+.offline-sub{font-size:11px;color:rgba(255,255,255,.25);text-align:center;line-height:1.6;}
 </style>
 
 <!-- SPLASH -->
 <div id="splash">
-  <div class="splash-circle">
-    <img src="liana-logo.png" alt="Liana Trust">
-  </div>
-  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-    <span class="splash-name">EthoGrid</span>
-    <span class="splash-by">by Liana Trust</span>
+  <!-- EthoGrid identity — large and prominent -->
+  <svg class="splash-eg-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="22" fill="#1C1C1C"/>
+    <line x1="0" y1="36" x2="100" y2="36" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
+    <line x1="0" y1="64" x2="100" y2="64" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
+    <line x1="36" y1="0" x2="36" y2="100" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
+    <line x1="64" y1="0" x2="64" y2="100" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
+    <rect x="12" y="62" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".25"/>
+    <rect x="29" y="62" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".42"/>
+    <rect x="29" y="45" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".58"/>
+    <rect x="46" y="45" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".74"/>
+    <rect x="46" y="28" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".88"/>
+    <rect x="63" y="28" width="14" height="14" rx="3.5" fill="#F0B429"/>
+    <rect x="72" y="31.5" width="3.5" height="5" rx="1" fill="#111"/>
+  </svg>
+  <span class="splash-eg-name">EthoGrid</span>
+  <!-- Liana Trust — creator attribution, smaller -->
+  <div class="splash-trust">
+    <div class="splash-trust-circle">
+      <img src="liana-logo.png" alt="Liana Trust">
+    </div>
+    <span class="splash-trust-label">by Liana Trust</span>
   </div>
 </div>
 
@@ -211,9 +249,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
     <button class="btn-add" onclick="openModal()">
       <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       Add Enclosure
-    </button>
-    <button class="btn-icon" id="lock-btn" onclick="toggleLock()" title="Unlock to enable removing enclosures" aria-label="Lock/unlock remove">
-      <svg id="lock-icon" width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="3" y="7" width="9" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
     </button>
     <button class="btn-icon" onclick="openTokenModal()" title="Settings" id="token-btn" aria-label="Settings">
       <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5a1.2 1.2 0 0 1 1.17.93l.18.74a4.5 4.5 0 0 1 .9.52l.72-.24a1.2 1.2 0 0 1 1.44.55l.5.87a1.2 1.2 0 0 1-.28 1.52l-.58.48a4.6 4.6 0 0 1 0 1.06l.58.48a1.2 1.2 0 0 1 .28 1.52l-.5.87a1.2 1.2 0 0 1-1.44.55l-.72-.24a4.5 4.5 0 0 1-.9.52l-.18.74A1.2 1.2 0 0 1 7.5 13.5a1.2 1.2 0 0 1-1.17-.93l-.18-.74a4.5 4.5 0 0 1-.9-.52l-.72.24a1.2 1.2 0 0 1-1.44-.55l-.5-.87a1.2 1.2 0 0 1 .28-1.52l.58-.48a4.6 4.6 0 0 1 0-1.06l-.58-.48a1.2 1.2 0 0 1-.28-1.52l.5-.87a1.2 1.2 0 0 1 1.44-.55l.72.24a4.5 4.5 0 0 1 .9-.52l.18-.74A1.2 1.2 0 0 1 7.5 1.5zm0 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" stroke="currentColor" stroke-width="1" fill="none"/></svg>
@@ -263,8 +298,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 <!-- GitHub token / sync settings -->
 <div class="modal-bg" id="token-modal" hidden>
   <div class="modal">
-    <div class="modal-title">GitHub Sync</div>
-    <div class="modal-sub">Enter a GitHub Personal Access Token so changes you make here update for the whole team. Read-only viewers don't need one.</div>
+    <div class="modal-title">Connect account</div>
+    <div class="modal-sub">Add a GitHub token to sync enclosure changes across all devices. Viewers can use the app without one.</div>
     <div class="field">
       <label>GitHub Token</label>
       <input id="inp-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
@@ -428,16 +463,26 @@ function render(){
           '</div>'+
         '</div>'+
         '<div class="tab-btns">'+
-          (has?'<button class="btn-snap" onclick="openSnap(\''+en.id+'\')" title="View last snapshot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="4.5" r="1.5" stroke="currentColor" stroke-width="1.1"/></svg> Snap</button>':'')+
+          (has?'<button class="btn-snap" onclick="openSnap(\''+en.id+'\')" title="View latest capture"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="4.5" r="1.5" stroke="currentColor" stroke-width="1.1"/></svg> Capture</button>':'')+
           '<button class="tab-btn" onclick="openModal(\''+en.id+'\')" title="Edit"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M7.5 1l2.5 2.5L3.5 10H1V7.5L7.5 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></button>'+
-          '<button class="tab-btn remove-btn" onclick="removeEnc(\''+en.id+'\')" title="Remove (unlock first)" id="rm-'+en.id+'" style="opacity:0.3;cursor:not-allowed" disabled><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5l8-8M9.5 9.5l-8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>'+
+          '<button class="tab-btn remove-btn" onclick="removeEnc(\''+en.id+'\')" title="Remove enclosure" id="rm-'+en.id+'"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5l8-8M9.5 9.5l-8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>'+
         '</div>'+
       '</div>'+
-      '<div class="tile-stream" id="stream-'+en.id+'">'+
+      '<div class="tile-stream" id="stream-'+en.id+'" onclick="expandStream(this,\''+esc(su)+'\')" title="Tap to expand">'+
         (has
-          ? '<img src="'+esc(su)+'" alt="'+esc(en.name)+' live feed" onerror="streamError(\''+en.id+'\')" onload="streamOk(\''+en.id+'\')">'
-          : '<div class="tile-offline">'+offlineSvg()+'<div class="tile-offline-msg">No URL configured<br>Click ✎ to add one</div></div>'
+          ? '<img src="'+esc(su)+'" alt="'+esc(en.name)+' live feed" onerror="streamError(\''+en.id+'\')" onload="streamOk(\''+en.id+'\')">'+
+            '<div class="stream-live-badge" id="badge-'+en.id+'"><span class="live-pip" id="pip-'+en.id+'"></span><span id="badgetxt-'+en.id+'">LIVE</span></div>'+
+            '<div class="stream-expand-hint">tap to expand</div>'
+          : '<div class="tile-offline">'+
+              '<svg class="offline-icon" width="38" height="38" viewBox="0 0 38 38" fill="none"><circle cx="19" cy="19" r="17" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M12 19h14M19 12v14" stroke="rgba(255,255,255,.25)" stroke-width="1.5" stroke-linecap="round"/></svg>'+
+              '<div class="offline-title">No camera configured</div>'+
+              '<div class="offline-sub">Tap ✎ to add the tunnel URL</div>'+
+            '</div>'
         )+
+      '</div>'+
+      '<div class="tile-footer">'+
+        '<span class="tile-footer-item">Last capture: <span id="lastcap-'+en.id+'">—</span></span>'+
+        '<span class="tile-footer-item">Next in <span id="nextcap-'+en.id+'">—</span></span>'+
       '</div>'+
     '</div>';
   }).join('');
@@ -445,10 +490,69 @@ function render(){
 
 function streamError(id){
   var d=document.getElementById('dot-'+id);if(d)d.classList.add('off');
+  var b=document.getElementById('badge-'+id);if(b)b.classList.add('offline');
+  var pip=document.getElementById('pip-'+id);if(pip)pip.classList.add('off');
+  var bt=document.getElementById('badgetxt-'+id);if(bt)bt.textContent='OFFLINE';
   var s=document.getElementById('stream-'+id);
-  if(s)s.innerHTML='<div class="tile-offline">'+offlineSvg()+'<div class="tile-offline-msg">Stream unavailable<br>Check the tunnel is running</div></div>';
+  if(s){
+    var img=s.querySelector('img');if(img)img.style.display='none';
+    if(!s.querySelector('.tile-offline')){
+      var od=document.createElement('div');od.className='tile-offline';
+      od.innerHTML='<svg class="offline-icon" width="38" height="38" viewBox="0 0 38 38" fill="none"><circle cx="19" cy="19" r="17" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="4 3"/><line x1="6" y1="6" x2="32" y2="32" stroke="rgba(239,68,68,.4)" stroke-width="1.5" stroke-linecap="round"/></svg><div class="offline-title">Camera offline</div><div class="offline-sub">Last seen: <span id="lastseen-'+id+'">checking…</span><br>Reconnects automatically</div>';
+      s.appendChild(od);
+    }
+    var ls=document.getElementById('lastseen-'+id);
+    if(ls)ls.textContent=new Date().toLocaleTimeString();
+  }
 }
-function streamOk(id){var d=document.getElementById('dot-'+id);if(d)d.classList.remove('off');}
+function streamOk(id){
+  var d=document.getElementById('dot-'+id);if(d)d.classList.remove('off');
+  var b=document.getElementById('badge-'+id);if(b)b.classList.remove('offline');
+  var pip=document.getElementById('pip-'+id);if(pip)pip.classList.remove('off');
+  var bt=document.getElementById('badgetxt-'+id);if(bt)bt.textContent='LIVE';
+  var s=document.getElementById('stream-'+id);
+  if(s){var od=s.querySelector('.tile-offline');if(od)od.remove();}
+  streamLastSeen[id]=Date.now();
+}
+
+var streamLastSeen={};
+function expandStream(el,url){
+  if(!url)return;
+  if(el.requestFullscreen){el.requestFullscreen().catch(function(){});}
+  else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen();}
+}
+
+// Footer countdown — updates every second
+var CAPTURE_INTERVAL=600;
+function updateFooters(){
+  var now=Math.floor(Date.now()/1000);
+  var secsInCycle=now%CAPTURE_INTERVAL;
+  var nextSecs=CAPTURE_INTERVAL-secsInCycle;
+  var mins=Math.floor(nextSecs/60);var secs=nextSecs%60;
+  var nextStr=mins+'m '+(secs<10?'0':'')+secs+'s';
+  enc.forEach(function(en){
+    var nEl=document.getElementById('nextcap-'+en.id);
+    if(nEl&&en.url)nEl.textContent=nextStr;
+    var lEl=document.getElementById('lastcap-'+en.id);
+    if(lEl&&streamLastSeen[en.id]){
+      var t=new Date(streamLastSeen[en.id]);
+      lEl.textContent=t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    }
+  });
+}
+setInterval(updateFooters,1000);
+
+// Badge live time update
+function updateBadgeTimes(){
+  enc.forEach(function(en){
+    var bt=document.getElementById('badgetxt-'+en.id);
+    if(bt&&bt.textContent==='LIVE'){
+      var t=new Date();
+      bt.textContent='LIVE · '+t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    }
+  });
+}
+setInterval(updateBadgeTimes,1000);
 
 // enclosure modal
 function openModal(id){
@@ -484,12 +588,10 @@ async function saveEnclosure(){
 }
 
 function removeEnc(id){
-  if(!unlocked) return;
+  var en=enc.find(function(x){return x.id===id;});if(!en)return;
+  if(!confirm('Remove "'+en.name+'"? This cannot be undone.'))return;
   enc=enc.filter(function(x){return x.id!==id;});
   persistLocal();render();
-  unlocked=false;
-  var btn=document.getElementById('lock-btn');
-  if(btn){btn.style.borderColor='';btn.style.color='';}
   var token=getToken();
   if(token){syncBar('loading','Syncing…');pushToGitHub().then(function(ok){ok?syncBar('ok','Removed — synced'):syncBar('err','Sync failed');});}
 }
@@ -533,37 +635,6 @@ function loadSnap(){
 }
 function refreshSnap(){var img=document.getElementById('snap-img');img.style.opacity='0';document.getElementById('snap-spinner').style.display='flex';document.getElementById('snap-time').textContent='Refreshing…';loadSnap();}
 function closeSnap(){document.getElementById('snap-bg').hidden=true;document.getElementById('snap-img').src='';snapUrl='';}
-
-// lock / unlock remove
-var unlocked = false;
-function toggleLock(){
-  unlocked = !unlocked;
-  var btn = document.getElementById('lock-btn');
-  var icon = document.getElementById('lock-icon');
-  document.querySelectorAll('.remove-btn').forEach(function(b){
-    if(unlocked){
-      b.disabled = false;
-      b.style.opacity = '1';
-      b.style.cursor = 'pointer';
-      b.title = 'Remove enclosure';
-    } else {
-      b.disabled = true;
-      b.style.opacity = '0.3';
-      b.style.cursor = 'not-allowed';
-      b.title = 'Remove (unlock first)';
-    }
-  });
-  if(unlocked){
-    btn.style.borderColor = '#ef4444';
-    btn.style.color = '#ef4444';
-    icon.innerHTML = '<rect x="3" y="7" width="9" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a2.5 2.5 0 0 1 5 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="10" y1="3.5" x2="10" y2="7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>';
-    syncBar('err','Remove unlocked — click ✕ to delete an enclosure');
-  } else {
-    btn.style.borderColor = '';
-    btn.style.color = '';
-    icon.innerHTML = '<rect x="3" y="7" width="9" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>';
-  }
-}
 
 // theme
 function toggleTheme(){
