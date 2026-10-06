@@ -170,12 +170,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 /* SPLASH SCREEN */
 #splash{position:fixed;inset:0;background:#111111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:9999;transition:opacity .6s ease;}
 #splash.hide{opacity:0;pointer-events:none;}
-.splash-eg-icon{width:120px;height:120px;flex-shrink:0;}
-.splash-eg-name{font-family:'Space Grotesk',system-ui,sans-serif;font-size:38px;font-weight:600;color:#F5F5F5;letter-spacing:-.03em;}
-.splash-trust{display:flex;align-items:center;gap:10px;margin-top:12px;}
-.splash-trust-circle{width:36px;height:36px;border-radius:50%;background:#2D6A4F;overflow:hidden;flex-shrink:0;}
-.splash-trust-circle img{width:100%;height:100%;object-fit:cover;}
-.splash-trust-label{font-size:12px;color:#555;letter-spacing:.08em;text-transform:uppercase;}
+.splash-icon-wrap{position:relative;width:120px;height:120px;flex-shrink:0;}
+.splash-eg-icon{width:120px;height:120px;}
+.splash-trust-badge{position:absolute;bottom:-8px;right:-8px;width:52px;height:52px;border-radius:50%;background:#2D6A4F;overflow:hidden;border:3px solid #111111;flex-shrink:0;}
+.splash-trust-badge img{width:100%;height:100%;object-fit:cover;}
+.splash-eg-name{font-family:'Space Grotesk',system-ui,sans-serif;font-size:38px;font-weight:600;color:#F5F5F5;letter-spacing:-.03em;margin-top:8px;}
+.splash-trust-label{font-size:11px;color:#444;letter-spacing:.08em;text-transform:uppercase;margin-top:4px;}
 
 /* STREAM OVERLAY */
 .stream-live-badge{position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 9px;font-size:10px;font-weight:500;color:rgba(255,255,255,.85);letter-spacing:.05em;backdrop-filter:blur(4px);pointer-events:none;transition:.3s;}
@@ -200,29 +200,27 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 
 <!-- SPLASH -->
 <div id="splash">
-  <!-- EthoGrid identity — large and prominent -->
-  <svg class="splash-eg-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="22" fill="#1C1C1C"/>
-    <line x1="0" y1="36" x2="100" y2="36" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
-    <line x1="0" y1="64" x2="100" y2="64" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
-    <line x1="36" y1="0" x2="36" y2="100" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
-    <line x1="64" y1="0" x2="64" y2="100" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
-    <rect x="12" y="62" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".25"/>
-    <rect x="29" y="62" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".42"/>
-    <rect x="29" y="45" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".58"/>
-    <rect x="46" y="45" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".74"/>
-    <rect x="46" y="28" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".88"/>
-    <rect x="63" y="28" width="14" height="14" rx="3.5" fill="#F0B429"/>
-    <rect x="72" y="31.5" width="3.5" height="5" rx="1" fill="#111"/>
-  </svg>
-  <span class="splash-eg-name">EthoGrid</span>
-  <!-- Liana Trust — creator attribution, smaller -->
-  <div class="splash-trust">
-    <div class="splash-trust-circle">
+  <div class="splash-icon-wrap">
+    <svg class="splash-eg-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="22" fill="#1C1C1C"/>
+      <line x1="0" y1="36" x2="100" y2="36" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
+      <line x1="0" y1="64" x2="100" y2="64" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
+      <line x1="36" y1="0" x2="36" y2="100" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
+      <line x1="64" y1="0" x2="64" y2="100" stroke="#E6A817" stroke-width="0.5" opacity=".1"/>
+      <rect x="12" y="62" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".25"/>
+      <rect x="29" y="62" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".42"/>
+      <rect x="29" y="45" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".58"/>
+      <rect x="46" y="45" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".74"/>
+      <rect x="46" y="28" width="14" height="14" rx="2.5" fill="#E6A817" opacity=".88"/>
+      <rect x="63" y="28" width="14" height="14" rx="3.5" fill="#F0B429"/>
+      <rect x="72" y="31.5" width="3.5" height="5" rx="1" fill="#111"/>
+    </svg>
+    <div class="splash-trust-badge">
       <img src="liana-logo.png" alt="Liana Trust">
     </div>
-    <span class="splash-trust-label">by Liana Trust</span>
   </div>
+  <span class="splash-eg-name">EthoGrid</span>
+  <span class="splash-trust-label">by Liana Trust</span>
 </div>
 
 <header class="hdr">
