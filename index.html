@@ -636,7 +636,7 @@ window.addEventListener('popstate',function(){
     if(top==='edit'){_closeModal();}
     else if(top==='snap'){_closeSnap();}
     else if(top==='settings'){_closeTokenModal();}
-    else if(top==='rm'){_rmCancel();_doRemoveIfConfirmed();}
+    else if(top==='rm'){_doRemoveIfConfirmed();_rmCancel();}
     return;
   }
   var now=Date.now();
