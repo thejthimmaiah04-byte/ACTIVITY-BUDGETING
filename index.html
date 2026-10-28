@@ -783,6 +783,7 @@ document.addEventListener('keydown',function(e){
 try{var t=localStorage.getItem('liana_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch{}
 updateTokenIndicator();
 loadFromGitHub();
+setInterval(loadFromGitHub, 300000); // re-poll config every 5 min to pick up new tunnel URLs
 
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(function(){});
