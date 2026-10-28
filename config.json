@@ -1,6 +1,12 @@
 {
   "enclosures": [
     {
+      "id": "enc1",
+      "name": "D - 11",
+      "species": "Daboia russelii",
+      "url": "http://192.168.1.121:8080"
+    },
+    {
       "id": "enc_1793169479265",
       "name": "01",
       "species": "",
