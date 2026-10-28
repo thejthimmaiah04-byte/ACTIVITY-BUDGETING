@@ -660,6 +660,7 @@ function openModal(id){
   document.getElementById('inp-name').value=en?en.name:'';
   document.getElementById('inp-species').value=en?en.species:'';
   document.getElementById('inp-url').value=en?en.url:'';
+  pushPanel('edit');
   document.getElementById('modal').hidden=false;
   document.getElementById('inp-name').focus();
 }
