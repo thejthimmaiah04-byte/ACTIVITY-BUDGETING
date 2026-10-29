@@ -791,8 +791,9 @@ function updateTokenIndicator(){
 
 // snapshot lightbox
 function openSnap(id){
-  var en=enc.find(function(x){return x.id===id;});if(!en||!en.url)return;
-  snapUrl=snapShotUrl(en.url);
+  var en=enc.find(function(x){return x.id===id;});if(!en)return;
+  var cam=getActiveCam(en);if(!cam)return;
+  snapUrl=snapShotUrl(cam.url);
   pushPanel('snap');
   document.getElementById('snap-name').textContent=en.name;
   document.getElementById('snap-time').textContent='Loading…';
