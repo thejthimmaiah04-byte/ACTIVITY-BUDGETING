@@ -84,11 +84,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .tab-btn{width:24px;height:24px;border-radius:5px;border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s;}
 .tab-btn:hover{background:var(--border);color:var(--text)}
 
-/* CAMERA TABS */
-.cam-tabs{display:flex;gap:6px;padding:8px 12px 0;background:var(--tile-bg);}
-.cam-tab{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text3);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;}
-.cam-tab.active{background:var(--accent);border-color:var(--accent);color:#000;}
-.cam-tab:not(.active):hover{border-color:var(--text3);color:var(--text2);}
+/* MULTI-CAMERA STACKED STREAMS */
+.tile-multi-streams{display:flex;flex-direction:column;}
+.cam-stream-block{display:flex;flex-direction:column;}
+.cam-stream-label{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;background:var(--surface2);border-top:1px solid var(--border);}
 
 /* STREAM */
 .tile-stream{position:relative;aspect-ratio:16/9;background:#080d09;overflow:hidden}
@@ -521,29 +520,65 @@ function normalizeCameras(en){
 }
 function getActiveCam(en){
   var cams=normalizeCameras(en);
-  if(!cams.length)return null;
-  var idx=selectedCam[en.id]||0;
-  return cams[Math.min(idx,cams.length-1)];
+  return cams.length?cams[0]:null;
 }
-function renderCamTabs(en){
+// cam-level id: encId + '-' + camIndex
+function streamOkCam(encId,i){
+  var cid=encId+'-'+i;
+  var b=document.getElementById('badge-'+cid);if(b)b.classList.remove('offline');
+  var pip=document.getElementById('pip-'+cid);if(pip)pip.classList.remove('off');
+  var bt=document.getElementById('badgetxt-'+cid);if(bt)bt.textContent='LIVE';
+  var s=document.getElementById('stream-'+cid);if(s){var od=s.querySelector('.tile-offline');if(od)od.remove();}
+  // mark tile-level dot live
+  var d=document.getElementById('dot-'+encId);if(d)d.classList.remove('off');
+  streamLastSeen[encId]=Date.now();
+}
+function streamErrCam(encId,i){
+  var cid=encId+'-'+i;
+  var b=document.getElementById('badge-'+cid);if(b)b.classList.add('offline');
+  var pip=document.getElementById('pip-'+cid);if(pip)pip.classList.add('off');
+  var bt=document.getElementById('badgetxt-'+cid);if(bt)bt.textContent='OFFLINE';
+  var s=document.getElementById('stream-'+cid);
+  if(s){
+    var img=s.querySelector('img');if(img)img.style.display='none';
+    if(!s.querySelector('.tile-offline')){
+      var od=document.createElement('div');od.className='tile-offline';
+      od.innerHTML='<svg class="offline-icon" width="38" height="38" viewBox="0 0 38 38" fill="none"><circle cx="19" cy="19" r="17" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="4 3"/><line x1="6" y1="6" x2="32" y2="32" stroke="rgba(239,68,68,.4)" stroke-width="1.5" stroke-linecap="round"/></svg><div class="offline-title">Camera offline</div><div class="offline-sub">Last seen: <span id="lastseen-'+cid+'">checking…</span><br>Reconnects automatically</div>';
+      s.appendChild(od);
+    }
+    var ls=document.getElementById('lastseen-'+cid);if(ls)ls.textContent=new Date().toLocaleTimeString();
+  }
+}
+function renderStreams(en){
   var cams=normalizeCameras(en);
-  if(cams.length<=1)return '';
-  var idx=selectedCam[en.id]||0;
-  return '<div class="cam-tabs">'+cams.map(function(cam,i){
-    return '<button class="cam-tab'+(i===idx?' active':'')+'" onclick="switchCam(\''+esc(en.id)+'\','+i+')">'+esc(cam.label||('Cam '+(i+1)))+'</button>';
+  if(!cams.length){
+    return '<div class="tile-stream" id="stream-'+en.id+'"><div class="tile-offline">'+
+      '<svg class="offline-icon" width="38" height="38" viewBox="0 0 38 38" fill="none"><circle cx="19" cy="19" r="17" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M12 19h14M19 12v14" stroke="rgba(255,255,255,.25)" stroke-width="1.5" stroke-linecap="round"/></svg>'+
+      '<div class="offline-title">No camera configured</div><div class="offline-sub">Tap ✎ to add the tunnel URL</div></div></div>';
+  }
+  if(cams.length===1){
+    var su=streamUrl(cams[0].url);
+    return '<div class="tile-stream" id="stream-'+en.id+'" onclick="expandStream(this,\''+esc(su)+'\')" title="Tap to expand">'+
+      '<img src="'+esc(su)+'" alt="'+esc(en.name)+'" onerror="streamError(\''+en.id+'\')" onload="streamOk(\''+en.id+'\')">'+
+      '<div class="stream-live-badge" id="badge-'+en.id+'"><span class="live-pip" id="pip-'+en.id+'"></span><span id="badgetxt-'+en.id+'">LIVE</span></div>'+
+      '<div class="stream-quality-chip '+qualityChipClass()+'" id="qchip-'+en.id+'">'+qualityLabel()+'</div>'+
+      '<div class="stream-expand-hint">tap to expand</div>'+
+    '</div>';
+  }
+  // Multi-camera: stacked streams, each always visible
+  return '<div class="tile-multi-streams">'+cams.map(function(cam,i){
+    var su=streamUrl(cam.url);
+    var cid=en.id+'-'+i;
+    return '<div class="cam-stream-block">'+
+      '<div class="cam-stream-label">'+esc(cam.label||'Camera '+(i+1))+'</div>'+
+      '<div class="tile-stream" id="stream-'+cid+'" onclick="expandStream(this,\''+esc(su)+'\')" title="Tap to expand">'+
+        '<img src="'+esc(su)+'" alt="'+esc(en.name)+' cam '+(i+1)+'" onerror="streamErrCam(\''+en.id+'\','+i+')" onload="streamOkCam(\''+en.id+'\','+i+')">'+
+        '<div class="stream-live-badge" id="badge-'+cid+'"><span class="live-pip" id="pip-'+cid+'"></span><span id="badgetxt-'+cid+'">LIVE</span></div>'+
+        '<div class="stream-quality-chip '+qualityChipClass()+'">'+qualityLabel()+'</div>'+
+        '<div class="stream-expand-hint">tap to expand</div>'+
+      '</div>'+
+    '</div>';
   }).join('')+'</div>';
-}
-function switchCam(encId,idx){
-  selectedCam[encId]=idx;
-  var en=enc.find(function(e){return e.id===encId;});if(!en)return;
-  var cams=normalizeCameras(en);var cam=cams[idx];if(!cam)return;
-  var su=streamUrl(cam.url);
-  var tile=document.getElementById('tile-'+encId);if(!tile)return;
-  tile.querySelectorAll('.cam-tab').forEach(function(t,i){t.classList.toggle('active',i===idx);});
-  var img=tile.querySelector('.tile-stream img');
-  if(img){img.src=su;img.onerror=function(){streamError(encId);};img.onload=function(){streamOk(encId);};}
-  var sd=document.getElementById('stream-'+encId);
-  if(sd)sd.onclick=function(){expandStream(sd,su);};
 }
 
 // render
@@ -555,9 +590,7 @@ function render(){
     return;
   }
   g.innerHTML=enc.map(function(en){
-    var cam=getActiveCam(en);
-    var has=!!cam;
-    var su=has?streamUrl(cam.url):'';
+    var has=normalizeCameras(en).length>0;
     return '<div class="tile" id="tile-'+en.id+'">'+
       '<div class="tile-tab">'+
         '<div class="tab-left">'+
@@ -573,20 +606,7 @@ function render(){
           '<button class="tab-btn remove-btn" onclick="removeEnc(\''+en.id+'\')" title="Remove enclosure" id="rm-'+en.id+'"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5l8-8M9.5 9.5l-8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>'+
         '</div>'+
       '</div>'+
-      renderCamTabs(en)+
-      '<div class="tile-stream" id="stream-'+en.id+'" onclick="expandStream(this,\''+esc(su)+'\')" title="Tap to expand">'+
-        (has
-          ? '<img src="'+esc(su)+'" alt="'+esc(en.name)+' live feed" onerror="streamError(\''+en.id+'\')" onload="streamOk(\''+en.id+'\')">'+
-            '<div class="stream-live-badge" id="badge-'+en.id+'"><span class="live-pip" id="pip-'+en.id+'"></span><span id="badgetxt-'+en.id+'">LIVE</span></div>'+
-            '<div class="stream-quality-chip '+qualityChipClass()+'" id="qchip-'+en.id+'">'+qualityLabel()+'</div>'+
-            '<div class="stream-expand-hint">tap to expand</div>'
-          : '<div class="tile-offline">'+
-              '<svg class="offline-icon" width="38" height="38" viewBox="0 0 38 38" fill="none"><circle cx="19" cy="19" r="17" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M12 19h14M19 12v14" stroke="rgba(255,255,255,.25)" stroke-width="1.5" stroke-linecap="round"/></svg>'+
-              '<div class="offline-title">No camera configured</div>'+
-              '<div class="offline-sub">Tap ✎ to add the tunnel URL</div>'+
-            '</div>'
-        )+
-      '</div>'+
+      renderStreams(en)+
       '<div class="tile-footer">'+
         '<span class="tile-footer-item">Last capture: <span id="lastcap-'+en.id+'">—</span></span>'+
         '<span class="tile-footer-item">Next in <span id="nextcap-'+en.id+'">—</span></span>'+
@@ -639,7 +659,7 @@ function updateFooters(){
   var nextStr=mins+'m '+(secs<10?'0':'')+secs+'s';
   enc.forEach(function(en){
     var nEl=document.getElementById('nextcap-'+en.id);
-    if(nEl&&en.url)nEl.textContent=nextStr;
+    if(nEl&&normalizeCameras(en).length)nEl.textContent=nextStr;
     var lEl=document.getElementById('lastcap-'+en.id);
     if(lEl&&streamLastSeen[en.id]){
       var t=new Date(streamLastSeen[en.id]);
@@ -651,12 +671,10 @@ setInterval(updateFooters,1000);
 
 // Badge live time update
 function updateBadgeTimes(){
-  enc.forEach(function(en){
-    var bt=document.getElementById('badgetxt-'+en.id);
-    if(bt&&bt.textContent==='LIVE'){
-      var t=new Date();
-      bt.textContent='LIVE · '+t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    }
+  var t=new Date();
+  var ts='LIVE · '+t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.querySelectorAll('[id^="badgetxt-"]').forEach(function(bt){
+    if(bt.textContent==='LIVE'||bt.textContent.startsWith('LIVE · '))bt.textContent=ts;
   });
 }
 setInterval(updateBadgeTimes,1000);
