@@ -211,25 +211,17 @@ def capture_loop():
         local_day_dir = os.path.join(CAPTURE_DIR, date_str)
         os.makedirs(local_day_dir, exist_ok=True)
         local_path    = os.path.join(local_day_dir, image_name)
-        tmp_jpg       = local_path.replace(".png", "_raw.jpg")
 
         try:
-            r = subprocess.run([
-                "ffmpeg", "-y", "-loglevel", "error",
-                "-rtsp_transport", "tcp",
-                "-i", CAMERA_RTSP,
-                "-frames:v", "1",
-                "-q:v", "1",
-                tmp_jpg
-            ], timeout=30)
-
-            if r.returncode != 0 or not os.path.exists(tmp_jpg):
-                print(f"[{time_str}] Frame capture failed")
+            # Use the frame already in the live buffer — avoids opening a second
+            # RTSP connection, which Tapo cameras block when one is already active.
+            frame = buf.frame
+            if not frame:
+                print(f"[{time_str}] No frame in buffer — camera may be offline")
                 continue
 
-            img = Image.open(tmp_jpg).convert('L')  # greyscale
+            img = Image.open(io.BytesIO(frame)).convert('L')  # greyscale
             img.save(local_path, "PNG", compress_level=6, optimize=True)
-            os.remove(tmp_jpg)
 
             img.thumbnail((1280, 720), Image.LANCZOS)
             img.save(SNAPSHOT_LATEST, "JPEG", quality=88)
@@ -246,8 +238,6 @@ def capture_loop():
 
         except Exception as e:
             print(f"[{time_str}] Capture error: {e}")
-            if os.path.exists(tmp_jpg):
-                os.remove(tmp_jpg)
 
 threading.Thread(target=capture_loop, daemon=True).start()
 
