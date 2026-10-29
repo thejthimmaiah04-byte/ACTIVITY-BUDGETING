@@ -25,7 +25,7 @@
         {
           "id": "cam2",
           "label": "Camera 2",
-          "url": "http://192.168.1.121:8082"
+          "url": "https://piece-corps-jan-officer.trycloudflare.com"
         }
       ]
     }
