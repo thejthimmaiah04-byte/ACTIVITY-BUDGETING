@@ -560,8 +560,11 @@ function renderStreams(en){
   }
   if(cams.length===1){
     var su=streamUrl(cams[0].url);
+    var snap=snapShotUrl(cams[0].url)+'?t='+Date.now();
     return '<div class="tile-stream" id="stream-'+en.id+'" onclick="expandStream(this,\''+esc(su)+'\')" title="Tap to expand">'+
-      '<img src="'+esc(su)+'" alt="'+esc(en.name)+'" onerror="streamError(\''+en.id+'\')" onload="streamOk(\''+en.id+'\')">'+
+      '<img src="'+esc(snap)+'" data-stream="'+esc(su)+'" alt="'+esc(en.name)+'" '+
+        'onload="if(!this._live){this._live=1;streamOk(\''+en.id+'\');this.src=this.dataset.stream;}" '+
+        'onerror="streamError(\''+en.id+'\')">'+
       '<div class="stream-live-badge" id="badge-'+en.id+'"><span class="live-pip" id="pip-'+en.id+'"></span><span id="badgetxt-'+en.id+'">LIVE</span></div>'+
       '<div class="stream-quality-chip '+qualityChipClass()+'" id="qchip-'+en.id+'">'+qualityLabel()+'</div>'+
       '<div class="stream-expand-hint">tap to expand</div>'+
@@ -570,11 +573,14 @@ function renderStreams(en){
   // Multi-camera: stacked streams, each always visible
   return '<div class="tile-multi-streams">'+cams.map(function(cam,i){
     var su=streamUrl(cam.url);
+    var snap=snapShotUrl(cam.url)+'?t='+Date.now();
     var cid=en.id+'-'+i;
     return '<div class="cam-stream-block">'+
       '<div class="cam-stream-label">'+esc(cam.label||'Camera '+(i+1))+'</div>'+
       '<div class="tile-stream" id="stream-'+cid+'" onclick="expandStream(this,\''+esc(su)+'\')" title="Tap to expand">'+
-        '<img src="'+esc(su)+'" alt="'+esc(en.name)+' cam '+(i+1)+'" onerror="streamErrCam(\''+en.id+'\','+i+')" onload="streamOkCam(\''+en.id+'\','+i+')">'+
+        '<img src="'+esc(snap)+'" data-stream="'+esc(su)+'" alt="'+esc(en.name)+' cam '+(i+1)+'" '+
+          'onload="if(!this._live){this._live=1;streamOkCam(\''+en.id+'\','+i+');this.src=this.dataset.stream;}" '+
+          'onerror="streamErrCam(\''+en.id+'\','+i+')">'+
         '<div class="stream-live-badge" id="badge-'+cid+'"><span class="live-pip" id="pip-'+cid+'"></span><span id="badgetxt-'+cid+'">LIVE</span></div>'+
         '<div class="stream-quality-chip '+qualityChipClass()+'">'+qualityLabel()+'</div>'+
         '<div class="stream-expand-hint">tap to expand</div>'+

@@ -274,6 +274,11 @@ def stream_low():
 
 @app.route('/snapshot')
 def snapshot():
+    frame = buf.frame
+    if frame:
+        resp = Response(frame, mimetype='image/jpeg')
+        resp.headers['Cache-Control'] = 'no-store'
+        return resp
     if os.path.exists(SNAPSHOT_LATEST):
         return send_file(SNAPSHOT_LATEST, mimetype='image/jpeg')
     blank = io.BytesIO()
