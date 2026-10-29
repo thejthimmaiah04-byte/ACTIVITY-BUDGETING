@@ -301,10 +301,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
       <label>Species (optional)</label>
       <input id="inp-species" type="text" placeholder="e.g. Daboia russelii">
     </div>
-    <div class="field">
-      <label>Camera Base URL</label>
-      <input id="inp-url" type="text" placeholder="https://your-tunnel.trycloudflare.com">
-      <span class="field-hint">App adds /stream and /snapshot automatically.</span>
+    <div id="cam-url-fields">
+      <div class="field">
+        <label>Camera Base URL</label>
+        <input id="inp-url" type="text" placeholder="https://your-tunnel.trycloudflare.com">
+        <span class="field-hint">App adds /stream and /snapshot automatically.</span>
+      </div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
@@ -725,8 +727,16 @@ function openModal(id){
   document.getElementById('modal-title').textContent=id?'Edit Enclosure':'Add Enclosure';
   document.getElementById('inp-name').value=en?en.name:'';
   document.getElementById('inp-species').value=en?en.species:'';
-  var firstCam=en?normalizeCameras(en)[0]:null;
-  document.getElementById('inp-url').value=firstCam?firstCam.url:'';
+  var cams=en?normalizeCameras(en):[{id:'cam1',label:'Camera 1',url:''}];
+  var container=document.getElementById('cam-url-fields');
+  container.innerHTML=cams.map(function(cam,i){
+    var isFirst=(i===0);
+    return '<div class="field">'+
+      '<label>'+(cams.length>1?esc(cam.label||'Camera '+(i+1))+' Base URL':'Camera Base URL')+'</label>'+
+      '<input id="inp-url'+(isFirst?'':'-'+i)+'" type="text" placeholder="https://your-tunnel.trycloudflare.com" value="'+esc(cam.url||'')+'">'+
+      (isFirst?'<span class="field-hint">App adds /stream and /snapshot automatically.</span>':'')+
+    '</div>';
+  }).join('');
   pushPanel('edit');
   document.getElementById('modal').hidden=false;
   document.getElementById('inp-name').focus();
@@ -737,17 +747,22 @@ function _closeModal(){document.getElementById('modal').hidden=true;editId=null;
 async function saveEnclosure(){
   var name=document.getElementById('inp-name').value.trim();
   var species=document.getElementById('inp-species').value.trim();
-  var url=document.getElementById('inp-url').value.trim().replace(/\/stream$/,'').replace(/\/+$/,'');
   if(!name){document.getElementById('inp-name').focus();return;}
+  // collect all camera URL inputs
+  var urlInputs=document.getElementById('cam-url-fields').querySelectorAll('input[type="text"]');
   if(editId){
     var en=enc.find(function(x){return x.id===editId;});
     if(en){
       en.name=name;en.species=species;
       var cams=normalizeCameras(en);
-      if(cams.length===1){cams[0].url=url;}
+      urlInputs.forEach(function(inp,i){
+        var u=inp.value.trim().replace(/\/stream$/,'').replace(/\/+$/,'');
+        if(cams[i])cams[i].url=u;
+      });
       en.cameras=cams;delete en.url;
     }
   }else{
+    var url=(urlInputs[0]?urlInputs[0].value.trim().replace(/\/stream$/,'').replace(/\/+$/,''):'');
     enc.push({id:'enc_'+Date.now(),name:name,species:species,cameras:[{id:'cam1',label:'Camera 1',url:url}]});
   }
   persistLocal();render();closeModal();
