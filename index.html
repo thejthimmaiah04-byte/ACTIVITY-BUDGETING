@@ -40,7 +40,7 @@
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:14px;line-height:1.5;min-height:100vh;padding-inline:20px;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:14px;line-height:1.5;min-height:100vh;padding-inline:20px;overflow-x:hidden;}
 
 /* HEADER */
 .hdr{display:flex;align-items:center;justify-content:space-between;padding-block:16px;border-bottom:1px solid var(--border);gap:12px;}
@@ -69,7 +69,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .grid.grid-single{grid-template-columns:1fr;max-width:860px;margin-inline:auto;width:100%;}
 
 /* TILE */
-.tile{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);min-width:0;}
 .tile-tab{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface2);border-bottom:1px solid var(--border);gap:6px;}
 .tab-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--dot);flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
@@ -79,15 +79,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .tab-name{font-family:'Space Grotesk',system-ui,sans-serif;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tab-species{font-size:10px;color:var(--text3);font-style:italic;letter-spacing:.04em;word-break:break-word;line-height:1.4;}
 .tab-btns{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.btn-snap{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;border:1px solid var(--snap);background:transparent;color:var(--snap);font:500 10px/1 'DM Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:.15s;}
-.btn-snap:hover{background:var(--snap);color:#fff}
 .tab-btn{width:24px;height:24px;border-radius:5px;border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s;}
 .tab-btn:hover{background:var(--border);color:var(--text)}
 
 /* MULTI-CAMERA STACKED STREAMS */
 .tile-multi-streams{display:flex;flex-direction:column;}
 .cam-stream-block{display:flex;flex-direction:column;}
-.cam-stream-label{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;background:var(--surface2);border-top:1px solid var(--border);}
+.cam-stream-label{display:flex;align-items:center;justify-content:space-between;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:5px 10px;background:var(--surface2);border-top:1px solid var(--border);}
+.cam-status{display:flex;align-items:center;gap:4px;font-size:9px;letter-spacing:.03em;text-transform:none;font-weight:500;color:var(--text3);}
+.cam-status-dot{width:5px;height:5px;border-radius:50%;background:#E6A817;flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
+.cam-status-dot.live{background:#4ADE80;}
+.cam-status-dot.offline{background:#ef4444;animation:none;}
 
 /* STREAM */
 .tile-stream{position:relative;aspect-ratio:16/9;background:#080d09;overflow:hidden}
@@ -321,8 +323,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 <!-- GitHub token / sync settings -->
 <div class="modal-bg" id="token-modal" hidden>
   <div class="modal">
-    <div class="modal-title">Connect account</div>
-    <div class="modal-sub">Add a GitHub token to sync enclosure changes across all devices. Viewers can use the app without one.</div>
+    <div class="modal-title">Sync settings</div>
+    <div class="modal-sub">Add a GitHub token to keep enclosure config in sync across all devices. Viewers can use the app without one.</div>
     <div class="field">
       <label>GitHub Token</label>
       <input id="inp-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
@@ -374,7 +376,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
       </svg>
     </div>
   </div>
-  <div class="snap-footer">Grayscale · 5-minute interval</div>
+  <div class="snap-footer">5-minute capture interval</div>
 </div>
 
 <div id="back-toast">Press back again to exit</div>
@@ -533,6 +535,8 @@ function streamOkCam(encId,i){
   var b=document.getElementById('badge-'+cid);if(b)b.classList.remove('offline');
   var pip=document.getElementById('pip-'+cid);if(pip)pip.classList.remove('off');
   var bt=document.getElementById('badgetxt-'+cid);if(bt)bt.textContent='LIVE';
+  var cd=document.getElementById('camdot-'+cid);if(cd)cd.className='cam-status-dot live';
+  var cs=document.getElementById('camstatus-'+cid);if(cs)cs.textContent='Live';
   var s=document.getElementById('stream-'+cid);if(s){var od=s.querySelector('.tile-offline');if(od)od.remove();}
   // mark tile-level dot live
   var d=document.getElementById('dot-'+encId);if(d)d.classList.remove('off');
@@ -543,6 +547,8 @@ function streamErrCam(encId,i){
   var b=document.getElementById('badge-'+cid);if(b)b.classList.add('offline');
   var pip=document.getElementById('pip-'+cid);if(pip)pip.classList.add('off');
   var bt=document.getElementById('badgetxt-'+cid);if(bt)bt.textContent='OFFLINE';
+  var cd=document.getElementById('camdot-'+cid);if(cd)cd.className='cam-status-dot offline';
+  var cs=document.getElementById('camstatus-'+cid);if(cs)cs.textContent='Offline';
   var s=document.getElementById('stream-'+cid);
   if(s){
     var live=s.querySelector('.stream-live');if(live)live.style.display='none';
@@ -569,7 +575,7 @@ function renderStreams(en){
       '<img class="stream-live" src="'+esc(su)+'" alt="'+esc(en.name)+'" '+
         'onload="this.classList.add(\'ready\');streamOk(\''+en.id+'\')" '+
         'onerror="streamError(\''+en.id+'\')">'+
-      '<div class="stream-live-badge" id="badge-'+en.id+'"><span class="live-pip" id="pip-'+en.id+'"></span><span id="badgetxt-'+en.id+'">LIVE</span></div>'+
+      '<div class="stream-live-badge" id="badge-'+en.id+'"><span class="live-pip off" id="pip-'+en.id+'"></span><span id="badgetxt-'+en.id+'">Connecting</span></div>'+
       '<div class="stream-quality-chip '+qualityChipClass()+'" id="qchip-'+en.id+'">'+qualityLabel()+'</div>'+
       '<div class="stream-expand-hint">tap to expand</div>'+
     '</div>';
@@ -580,13 +586,13 @@ function renderStreams(en){
     var snap=snapShotUrl(cam.url)+'?t='+Date.now();
     var cid=en.id+'-'+i;
     return '<div class="cam-stream-block">'+
-      '<div class="cam-stream-label">'+esc(cam.label||'Camera '+(i+1))+'</div>'+
+      '<div class="cam-stream-label"><span>'+esc(cam.label||'Camera '+(i+1))+'</span><span class="cam-status"><span class="cam-status-dot" id="camdot-'+cid+'"></span><span id="camstatus-'+cid+'">Connecting</span></span></div>'+
       '<div class="tile-stream" id="stream-'+cid+'" onclick="expandStream(this,\''+esc(su)+'\')" title="Tap to expand">'+
         '<img class="stream-snap" src="'+esc(snap)+'" alt="">'+
         '<img class="stream-live" src="'+esc(su)+'" alt="'+esc(en.name)+' cam '+(i+1)+'" '+
           'onload="this.classList.add(\'ready\');streamOkCam(\''+en.id+'\','+i+')" '+
           'onerror="streamErrCam(\''+en.id+'\','+i+')">'+
-        '<div class="stream-live-badge" id="badge-'+cid+'"><span class="live-pip" id="pip-'+cid+'"></span><span id="badgetxt-'+cid+'">LIVE</span></div>'+
+        '<div class="stream-live-badge" id="badge-'+cid+'"><span class="live-pip off" id="pip-'+cid+'"></span><span id="badgetxt-'+cid+'">Connecting</span></div>'+
         '<div class="stream-quality-chip '+qualityChipClass()+'">'+qualityLabel()+'</div>'+
         '<div class="stream-expand-hint">tap to expand</div>'+
       '</div>'+
@@ -614,14 +620,14 @@ function render(){
           '</div>'+
         '</div>'+
         '<div class="tab-btns">'+
-          (has?'<button class="btn-snap" onclick="openSnap(\''+en.id+'\')" title="View latest capture"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="4.5" r="1.5" stroke="currentColor" stroke-width="1.1"/></svg> Capture</button>':'')+
+          (has?'<button class="tab-btn" onclick="openSnap(\''+en.id+'\')" title="View snapshots" aria-label="View snapshots"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="4" width="11" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="6.5" cy="8" r="2" stroke="currentColor" stroke-width="1.1"/><path d="M4.5 4V3.5A.5.5 0 0 1 5 3h3a.5.5 0 0 1 .5.5V4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg></button>':'')+
           '<button class="tab-btn" onclick="openModal(\''+en.id+'\')" title="Edit"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M7.5 1l2.5 2.5L3.5 10H1V7.5L7.5 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></button>'+
           '<button class="tab-btn remove-btn" onclick="removeEnc(\''+en.id+'\')" title="Remove enclosure" id="rm-'+en.id+'"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5l8-8M9.5 9.5l-8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>'+
         '</div>'+
       '</div>'+
       renderStreams(en)+
       '<div class="tile-footer">'+
-        '<span class="tile-footer-item">Last capture: <span id="lastcap-'+en.id+'">—</span></span>'+
+        '<span class="tile-footer-item">Last seen: <span id="lastcap-'+en.id+'">Not yet</span></span>'+
         '<span class="tile-footer-item">Next in <span id="nextcap-'+en.id+'">—</span></span>'+
       '</div>'+
     '</div>';
