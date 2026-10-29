@@ -84,6 +84,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .tab-btn{width:24px;height:24px;border-radius:5px;border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s;}
 .tab-btn:hover{background:var(--border);color:var(--text)}
 
+/* CAMERA TABS */
+.cam-tabs{display:flex;gap:6px;padding:8px 12px 0;background:var(--tile-bg);}
+.cam-tab{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text3);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;}
+.cam-tab.active{background:var(--accent);border-color:var(--accent);color:#000;}
+.cam-tab:not(.active):hover{border-color:var(--text3);color:var(--text2);}
+
 /* STREAM */
 .tile-stream{position:relative;aspect-ratio:16/9;background:#080d09;overflow:hidden}
 .tile-stream img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -380,6 +386,7 @@ const TK_KEY  = 'liana_ghtoken';
 
 let enc = [];
 let editId = null;
+let selectedCam = {}; // encId -> camera index
 let snapUrl = '';
 let cfgSha = '';
 
@@ -500,6 +507,39 @@ async function pushToGitHub(){
   }catch{return false;}
 }
 
+// ── Multi-camera helpers ──────────────────────────────────────
+function normalizeCameras(en){
+  if(en.cameras&&en.cameras.length)return en.cameras;
+  if(en.url)return [{id:'cam1',label:'Camera 1',url:en.url}];
+  return [];
+}
+function getActiveCam(en){
+  var cams=normalizeCameras(en);
+  if(!cams.length)return null;
+  var idx=selectedCam[en.id]||0;
+  return cams[Math.min(idx,cams.length-1)];
+}
+function renderCamTabs(en){
+  var cams=normalizeCameras(en);
+  if(cams.length<=1)return '';
+  var idx=selectedCam[en.id]||0;
+  return '<div class="cam-tabs">'+cams.map(function(cam,i){
+    return '<button class="cam-tab'+(i===idx?' active':'')+'" onclick="switchCam(\''+esc(en.id)+'\','+i+')">'+esc(cam.label||('Cam '+(i+1)))+'</button>';
+  }).join('')+'</div>';
+}
+function switchCam(encId,idx){
+  selectedCam[encId]=idx;
+  var en=enc.find(function(e){return e.id===encId;});if(!en)return;
+  var cams=normalizeCameras(en);var cam=cams[idx];if(!cam)return;
+  var su=streamUrl(cam.url);
+  var tile=document.getElementById('tile-'+encId);if(!tile)return;
+  tile.querySelectorAll('.cam-tab').forEach(function(t,i){t.classList.toggle('active',i===idx);});
+  var img=tile.querySelector('.tile-stream img');
+  if(img){img.src=su;img.onerror=function(){streamError(encId);};img.onload=function(){streamOk(encId);};}
+  var sd=document.getElementById('stream-'+encId);
+  if(sd)sd.onclick=function(){expandStream(sd,su);};
+}
+
 // render
 function render(){
   updateGridLayout();
@@ -509,9 +549,10 @@ function render(){
     return;
   }
   g.innerHTML=enc.map(function(en){
-    var has=!!en.url;
-    var su=has?streamUrl(en.url):'';
-    return '<div class="tile">'+
+    var cam=getActiveCam(en);
+    var has=!!cam;
+    var su=has?streamUrl(cam.url):'';
+    return '<div class="tile" id="tile-'+en.id+'">'+
       '<div class="tile-tab">'+
         '<div class="tab-left">'+
           '<span class="live-dot '+(has?'':'off')+'" id="dot-'+en.id+'"></span>'+
@@ -526,6 +567,7 @@ function render(){
           '<button class="tab-btn remove-btn" onclick="removeEnc(\''+en.id+'\')" title="Remove enclosure" id="rm-'+en.id+'"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5l8-8M9.5 9.5l-8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>'+
         '</div>'+
       '</div>'+
+      renderCamTabs(en)+
       '<div class="tile-stream" id="stream-'+en.id+'" onclick="expandStream(this,\''+esc(su)+'\')" title="Tap to expand">'+
         (has
           ? '<img src="'+esc(su)+'" alt="'+esc(en.name)+' live feed" onerror="streamError(\''+en.id+'\')" onload="streamOk(\''+en.id+'\')">'+
@@ -659,7 +701,8 @@ function openModal(id){
   document.getElementById('modal-title').textContent=id?'Edit Enclosure':'Add Enclosure';
   document.getElementById('inp-name').value=en?en.name:'';
   document.getElementById('inp-species').value=en?en.species:'';
-  document.getElementById('inp-url').value=en?en.url:'';
+  var firstCam=en?normalizeCameras(en)[0]:null;
+  document.getElementById('inp-url').value=firstCam?firstCam.url:'';
   pushPanel('edit');
   document.getElementById('modal').hidden=false;
   document.getElementById('inp-name').focus();
@@ -672,8 +715,17 @@ async function saveEnclosure(){
   var species=document.getElementById('inp-species').value.trim();
   var url=document.getElementById('inp-url').value.trim().replace(/\/stream$/,'').replace(/\/+$/,'');
   if(!name){document.getElementById('inp-name').focus();return;}
-  if(editId){var en=enc.find(function(x){return x.id===editId;});if(en){en.name=name;en.species=species;en.url=url;}}
-  else{enc.push({id:'enc_'+Date.now(),name:name,species:species,url:url});}
+  if(editId){
+    var en=enc.find(function(x){return x.id===editId;});
+    if(en){
+      en.name=name;en.species=species;
+      var cams=normalizeCameras(en);
+      if(cams.length===1){cams[0].url=url;}
+      en.cameras=cams;delete en.url;
+    }
+  }else{
+    enc.push({id:'enc_'+Date.now(),name:name,species:species,cameras:[{id:'cam1',label:'Camera 1',url:url}]});
+  }
   persistLocal();render();closeModal();
 
   var token=getToken();

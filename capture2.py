@@ -11,7 +11,7 @@ from flask import Flask, Response, send_file
 from PIL import Image, ImageOps, ImageFilter
 
 # ── Config ────────────────────────────────────────────────────
-ENCLOSURE_NAME  = "D-10"           # ← match enclosure name in EthoGrid app
+ENCLOSURE_NAME  = "D-4"           # ← match enclosure name in EthoGrid app
 
 # Tapo:  rtsp://[camera-account-user]:[camera-account-pass]@[camera-ip]:554/stream1
 # Qubo:  rtsp://admin:[password]@[camera-ip]:554/Streaming/Channels/101

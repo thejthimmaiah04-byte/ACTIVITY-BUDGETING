@@ -4,13 +4,18 @@
       "id": "enc1",
       "name": "D - 11",
       "species": "Daboia russelii",
-      "url": "https://dietary-dancing-pursue-limit.trycloudflare.com"
+      "cameras": [
+        {"id": "cam1", "label": "Camera 1", "url": "https://dietary-dancing-pursue-limit.trycloudflare.com"}
+      ]
     },
     {
       "id": "enc2",
-      "name": "D - 10",
+      "name": "D - 4",
       "species": "",
-      "url": "https://bare-scientist-por-palestinian.trycloudflare.com"
+      "cameras": [
+        {"id": "cam1", "label": "Camera 1", "url": "https://bare-scientist-por-palestinian.trycloudflare.com"},
+        {"id": "cam2", "label": "Camera 2", "url": "http://192.168.1.121:8082"}
+      ]
     }
   ]
 }
