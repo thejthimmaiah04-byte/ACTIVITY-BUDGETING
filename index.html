@@ -133,6 +133,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .snap-close:hover{background:rgba(255,255,255,.18);color:#fff}
 .snap-img-wrap{position:relative;width:100%;max-width:860px;border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;background:#000;aspect-ratio:16/9;}
 .snap-img-wrap img{width:100%;height:100%;object-fit:contain;display:block}
+/* multi-camera stacked snapshots */
+.snap-multi{display:flex;flex-direction:column;gap:8px;width:100%;max-width:860px;overflow-y:auto;max-height:70vh;}
+.snap-cam-block{display:flex;flex-direction:column;gap:4px;}
+.snap-cam-label{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;padding:0 2px;}
+.snap-cam-img-wrap{position:relative;width:100%;border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;background:#000;aspect-ratio:16/9;}
+.snap-cam-img-wrap img{width:100%;height:100%;object-fit:contain;display:block;transition:opacity .2s;}
 .snap-spinner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
 .snap-spinner svg{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -355,7 +361,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
       </button>
     </div>
   </div>
-  <div class="snap-img-wrap">
+  <div class="snap-img-wrap" id="snap-img-wrap">
     <img id="snap-img" src="" alt="Snapshot">
     <div class="snap-spinner" id="snap-spinner">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -364,7 +370,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
       </svg>
     </div>
   </div>
-  <div class="snap-footer">Grayscale · 4K · 10-minute interval</div>
+  <div class="snap-footer">Grayscale · 5-minute interval</div>
 </div>
 
 <div id="back-toast">Press back again to exit</div>
@@ -790,27 +796,57 @@ function updateTokenIndicator(){
 }
 
 // snapshot lightbox
+var _snapEncId=null;
 function openSnap(id){
   var en=enc.find(function(x){return x.id===id;});if(!en)return;
-  var cam=getActiveCam(en);if(!cam)return;
-  snapUrl=snapShotUrl(cam.url);
+  var cams=normalizeCameras(en);if(!cams.length)return;
+  _snapEncId=id;
+  snapUrl=snapShotUrl(cams[0].url); // keep for compat
   pushPanel('snap');
   document.getElementById('snap-name').textContent=en.name;
   document.getElementById('snap-time').textContent='Loading…';
-  var img=document.getElementById('snap-img');img.style.opacity='0';
-  document.getElementById('snap-spinner').style.display='flex';
   document.getElementById('snap-bg').hidden=false;
   loadSnap();
 }
 function loadSnap(){
-  var img=document.getElementById('snap-img');
-  img.onload=function(){document.getElementById('snap-spinner').style.display='none';img.style.opacity='1';document.getElementById('snap-time').textContent='Last snapshot · '+new Date().toLocaleTimeString();};
-  img.onerror=function(){document.getElementById('snap-spinner').style.display='none';img.style.opacity='0.3';document.getElementById('snap-time').textContent='Snapshot unavailable';};
-  img.src=snapUrl+'?t='+Date.now();
+  var en=_snapEncId?enc.find(function(x){return x.id===_snapEncId;}):null;
+  var cams=en?normalizeCameras(en):[];
+  var wrap=document.getElementById('snap-img-wrap');
+  var singleImg=document.getElementById('snap-img');
+  var spinner=document.getElementById('snap-spinner');
+  if(cams.length>1){
+    // multi-camera: hide single img, show stacked blocks
+    singleImg.style.display='none';spinner.style.display='none';
+    wrap.style.display='none';
+    var existing=document.getElementById('snap-multi');
+    if(existing)existing.remove();
+    var multi=document.createElement('div');multi.className='snap-multi';multi.id='snap-multi';
+    var loaded=0;
+    cams.forEach(function(cam,i){
+      var block=document.createElement('div');block.className='snap-cam-block';
+      var label=document.createElement('div');label.className='snap-cam-label';label.textContent=cam.label||('Camera '+(i+1));
+      var imgWrap=document.createElement('div');imgWrap.className='snap-cam-img-wrap';
+      var img=document.createElement('img');img.style.opacity='0';
+      img.onload=function(){img.style.opacity='1';loaded++;if(loaded===cams.length)document.getElementById('snap-time').textContent='Last snapshot · '+new Date().toLocaleTimeString();};
+      img.onerror=function(){img.style.opacity='0.3';loaded++;};
+      img.src=snapShotUrl(cam.url)+'?t='+Date.now();
+      imgWrap.appendChild(img);block.appendChild(label);block.appendChild(imgWrap);multi.appendChild(block);
+    });
+    // insert multi before snap-footer
+    document.getElementById('snap-bg').insertBefore(multi,document.querySelector('.snap-footer'));
+  }else{
+    // single camera
+    var existing2=document.getElementById('snap-multi');if(existing2)existing2.remove();
+    wrap.style.display='';singleImg.style.display='';spinner.style.display='flex';
+    singleImg.style.opacity='0';
+    singleImg.onload=function(){spinner.style.display='none';singleImg.style.opacity='1';document.getElementById('snap-time').textContent='Last snapshot · '+new Date().toLocaleTimeString();};
+    singleImg.onerror=function(){spinner.style.display='none';singleImg.style.opacity='0.3';document.getElementById('snap-time').textContent='Snapshot unavailable';};
+    singleImg.src=(cams[0]?snapShotUrl(cams[0].url):snapUrl)+'?t='+Date.now();
+  }
 }
-function refreshSnap(){var img=document.getElementById('snap-img');img.style.opacity='0';document.getElementById('snap-spinner').style.display='flex';document.getElementById('snap-time').textContent='Refreshing…';loadSnap();}
+function refreshSnap(){document.getElementById('snap-time').textContent='Refreshing…';var m=document.getElementById('snap-multi');if(m)m.remove();loadSnap();}
 function closeSnap(){history.back();}
-function _closeSnap(){document.getElementById('snap-bg').hidden=true;document.getElementById('snap-img').src='';snapUrl='';}
+function _closeSnap(){document.getElementById('snap-bg').hidden=true;document.getElementById('snap-img').src='';var m=document.getElementById('snap-multi');if(m)m.remove();snapUrl='';_snapEncId=null;}
 
 // theme
 function toggleTheme(){
