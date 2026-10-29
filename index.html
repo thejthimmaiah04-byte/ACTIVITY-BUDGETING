@@ -91,7 +91,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 
 /* STREAM */
 .tile-stream{position:relative;aspect-ratio:16/9;background:#080d09;overflow:hidden}
-.tile-stream img{width:100%;height:100%;object-fit:cover;display:block;}
+.tile-stream img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+.tile-stream .stream-snap{z-index:0;}
+.tile-stream .stream-live{z-index:1;opacity:0;transition:opacity .5s;}
+.tile-stream .stream-live.ready{opacity:1;}
 .tile-offline{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
 .tile-offline-msg{font-size:12px;color:var(--text3);text-align:center;line-height:1.6}
 
@@ -542,7 +545,7 @@ function streamErrCam(encId,i){
   var bt=document.getElementById('badgetxt-'+cid);if(bt)bt.textContent='OFFLINE';
   var s=document.getElementById('stream-'+cid);
   if(s){
-    var img=s.querySelector('img');if(img)img.style.display='none';
+    var live=s.querySelector('.stream-live');if(live)live.style.display='none';
     if(!s.querySelector('.tile-offline')){
       var od=document.createElement('div');od.className='tile-offline';
       od.innerHTML='<svg class="offline-icon" width="38" height="38" viewBox="0 0 38 38" fill="none"><circle cx="19" cy="19" r="17" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="4 3"/><line x1="6" y1="6" x2="32" y2="32" stroke="rgba(239,68,68,.4)" stroke-width="1.5" stroke-linecap="round"/></svg><div class="offline-title">Camera offline</div><div class="offline-sub">Last seen: <span id="lastseen-'+cid+'">checking…</span><br>Reconnects automatically</div>';
@@ -562,8 +565,9 @@ function renderStreams(en){
     var su=streamUrl(cams[0].url);
     var snap=snapShotUrl(cams[0].url)+'?t='+Date.now();
     return '<div class="tile-stream" id="stream-'+en.id+'" onclick="expandStream(this,\''+esc(su)+'\')" title="Tap to expand">'+
-      '<img src="'+esc(snap)+'" data-stream="'+esc(su)+'" alt="'+esc(en.name)+'" '+
-        'onload="if(!this._live){this._live=1;streamOk(\''+en.id+'\');this.src=this.dataset.stream;}" '+
+      '<img class="stream-snap" src="'+esc(snap)+'" alt="">'+
+      '<img class="stream-live" src="'+esc(su)+'" alt="'+esc(en.name)+'" '+
+        'onload="this.classList.add(\'ready\');streamOk(\''+en.id+'\')" '+
         'onerror="streamError(\''+en.id+'\')">'+
       '<div class="stream-live-badge" id="badge-'+en.id+'"><span class="live-pip" id="pip-'+en.id+'"></span><span id="badgetxt-'+en.id+'">LIVE</span></div>'+
       '<div class="stream-quality-chip '+qualityChipClass()+'" id="qchip-'+en.id+'">'+qualityLabel()+'</div>'+
@@ -578,8 +582,9 @@ function renderStreams(en){
     return '<div class="cam-stream-block">'+
       '<div class="cam-stream-label">'+esc(cam.label||'Camera '+(i+1))+'</div>'+
       '<div class="tile-stream" id="stream-'+cid+'" onclick="expandStream(this,\''+esc(su)+'\')" title="Tap to expand">'+
-        '<img src="'+esc(snap)+'" data-stream="'+esc(su)+'" alt="'+esc(en.name)+' cam '+(i+1)+'" '+
-          'onload="if(!this._live){this._live=1;streamOkCam(\''+en.id+'\','+i+');this.src=this.dataset.stream;}" '+
+        '<img class="stream-snap" src="'+esc(snap)+'" alt="">'+
+        '<img class="stream-live" src="'+esc(su)+'" alt="'+esc(en.name)+' cam '+(i+1)+'" '+
+          'onload="this.classList.add(\'ready\');streamOkCam(\''+en.id+'\','+i+')" '+
           'onerror="streamErrCam(\''+en.id+'\','+i+')">'+
         '<div class="stream-live-badge" id="badge-'+cid+'"><span class="live-pip" id="pip-'+cid+'"></span><span id="badgetxt-'+cid+'">LIVE</span></div>'+
         '<div class="stream-quality-chip '+qualityChipClass()+'">'+qualityLabel()+'</div>'+
@@ -630,7 +635,8 @@ function streamError(id){
   var bt=document.getElementById('badgetxt-'+id);if(bt)bt.textContent='OFFLINE';
   var s=document.getElementById('stream-'+id);
   if(s){
-    var img=s.querySelector('img');if(img)img.style.display='none';
+    // hide only the live stream img; keep the snapshot behind
+    var live=s.querySelector('.stream-live');if(live)live.style.display='none';
     if(!s.querySelector('.tile-offline')){
       var od=document.createElement('div');od.className='tile-offline';
       od.innerHTML='<svg class="offline-icon" width="38" height="38" viewBox="0 0 38 38" fill="none"><circle cx="19" cy="19" r="17" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="4 3"/><line x1="6" y1="6" x2="32" y2="32" stroke="rgba(239,68,68,.4)" stroke-width="1.5" stroke-linecap="round"/></svg><div class="offline-title">Camera offline</div><div class="offline-sub">Last seen: <span id="lastseen-'+id+'">checking…</span><br>Reconnects automatically</div>';
