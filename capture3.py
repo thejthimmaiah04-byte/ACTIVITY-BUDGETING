@@ -12,6 +12,7 @@ from PIL import Image, ImageOps, ImageFilter
 
 # ── Config ────────────────────────────────────────────────────
 ENCLOSURE_NAME  = "D-4"           # ← match enclosure name in EthoGrid app
+CAMERA_ID       = "cam2"
 
 # Tapo:  rtsp://[camera-account-user]:[camera-account-pass]@[camera-ip]:554/stream1
 # Qubo:  rtsp://admin:[password]@[camera-ip]:554/Streaming/Channels/101
@@ -186,7 +187,8 @@ def retry_loop():
                 local_path    = os.path.join(day_dir, filename)
                 drive_folder  = f"images/{ENCLOSURE_NAME}/{date_folder}"
                 try:
-                    rest          = filename[len(ENCLOSURE_NAME) + 1:]
+                    prefix        = f"{ENCLOSURE_NAME}-{CAMERA_ID}-"
+                    rest          = filename[len(prefix):]
                     time_part     = rest[:5].replace("-", ":")
                     timestamp_str = f"{date_folder} {time_part}"
                 except Exception:
@@ -203,7 +205,7 @@ def capture_loop():
         now           = datetime.now()
         date_str      = now.strftime("%Y-%m-%d")
         time_str      = now.strftime("%H-%M")
-        image_name    = f"{ENCLOSURE_NAME}-{time_str}-{date_str}.png"
+        image_name    = f"{ENCLOSURE_NAME}-{CAMERA_ID}-{time_str}-{date_str}.png"
         timestamp_str = now.strftime("%Y-%m-%d %H:%M")
         drive_folder  = f"images/{ENCLOSURE_NAME}/{date_str}"
         local_day_dir = os.path.join(CAPTURE_DIR, date_str)
