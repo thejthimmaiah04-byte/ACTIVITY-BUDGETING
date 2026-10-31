@@ -68,6 +68,14 @@ class RTSPBuffer:
                             break
                         frame = data[s:e + 2]
                         data  = data[e + 2:]
+                        try:
+                            _img = Image.open(io.BytesIO(frame))
+                            _img = _img.rotate(180)
+                            _out = io.BytesIO()
+                            _img.save(_out, 'JPEG', quality=85)
+                            frame = _out.getvalue()
+                        except Exception:
+                            pass
                         with self.cond:
                             self.frame = frame
                             self.cond.notify_all()

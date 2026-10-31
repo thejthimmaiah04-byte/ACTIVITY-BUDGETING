@@ -1,18 +1,6 @@
 {
   "enclosures": [
     {
-      "id": "enc1",
-      "name": "D - 11",
-      "species": "Daboia russelii",
-      "cameras": [
-        {
-          "id": "cam1",
-          "label": "Camera 1",
-          "url": "https://broadcast-twenty-hunt-focuses.trycloudflare.com"
-        }
-      ]
-    },
-    {
       "id": "enc2",
       "name": "D - 4",
       "species": "",
