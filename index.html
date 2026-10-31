@@ -136,7 +136,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .snap-close{width:30px;height:30px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
 .snap-close:hover{background:rgba(255,255,255,.18);color:#fff}
 .snap-img-wrap{position:relative;width:100%;max-width:860px;border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;background:#000;aspect-ratio:16/9;}
-.snap-img-wrap img{width:100%;height:100%;object-fit:contain;display:block}
+.snap-img-wrap img{width:100%;height:100%;object-fit:contain;display:block;filter:grayscale(1);}
 /* multi-camera stacked snapshots */
 .snap-multi{display:flex;flex-direction:column;gap:8px;width:100%;max-width:860px;overflow-y:auto;max-height:70vh;}
 .snap-cam-block{display:flex;flex-direction:column;gap:4px;}
