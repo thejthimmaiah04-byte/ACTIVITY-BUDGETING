@@ -94,7 +94,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 /* STREAM */
 .tile-stream{position:relative;aspect-ratio:16/9;background:#080d09;overflow:hidden}
 .tile-stream img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
-.tile-stream .stream-snap{z-index:0;}
+.tile-stream .stream-snap{z-index:0;filter:grayscale(1);}
 .tile-stream .stream-live{z-index:1;opacity:0;transition:opacity .5s;}
 .tile-stream .stream-live.ready{opacity:1;}
 .tile-offline{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
