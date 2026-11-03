@@ -235,7 +235,7 @@ def capture_loop():
                 print(f"[{time_str}] Frame capture failed")
                 continue
 
-            img = Image.open(tmp_jpg).convert('L')  # greyscale
+            img = Image.open(tmp_jpg).convert('L').rotate(180)
             img.save(local_path, "PNG", compress_level=6, optimize=True)
             os.remove(tmp_jpg)
 
